@@ -1,20 +1,20 @@
-import { multiply } from 'react-native-trays';
-import { Text, View, StyleSheet } from 'react-native';
+import { TrayProvider } from 'react-native-trays';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-const result = multiply(3, 7);
+// Import configurations
+import { trays } from './config/trayRegistry';
+import { stackConfigs } from './config/stackConfigs';
+import { HomeScreen } from './screens/HomeScreen';
 
+/**
+ * Main App component that sets up the TrayProvider with all configurations
+ */
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <SafeAreaProvider>
+      <TrayProvider trays={trays} stackConfigs={stackConfigs}>
+        <HomeScreen />
+      </TrayProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

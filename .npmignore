@@ -1,0 +1,14 @@
+example/
+__tests__/
+.github/
+node_modules/
+tsconfig.json
+.eslintrc.js
+.prettierrc
+.lintstagedrc
+commitlint.config.js
+husky/
+.gitignore
+*.log
+*.test.*
+*.spec.*

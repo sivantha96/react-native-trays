@@ -1,8 +1,10 @@
 # react-native-trays
 
-<!-- Demo Video -->
+<!-- Demo Videos -->
 <p align="center">
-  <video src="example/demo.mp4" width="320" height="640" autoplay loop muted playsinline style="border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.14);margin-bottom:16px;"></video>
+  <img src="example/demo-1.gif" width="250" alt="Demo 1" style="border-radius:12px;margin:0 10px;">
+  <img src="example/demo-2.gif" width="250" alt="Demo 2" style="border-radius:12px;margin:0 10px;">
+  <img src="example/demo-3.gif" width="250" alt="Demo 3" style="border-radius:12px;margin:0 10px;">
 </p>
 
 A production-grade, fully open-source tray system for React Native, supporting Expo and bare workflows. Built with TypeScript, Reanimated, and best industry practices.
@@ -25,7 +27,7 @@ A production-grade, fully open-source tray system for React Native, supporting E
 [![npm version](https://img.shields.io/npm/v/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![Downloads](https://img.shields.io/npm/dm/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha96/react-native-trays/actions)
+[![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/release.yml/badge.svg)](https://github.com/sivantha96/react-native-trays/actions/workflows/release.yml)
 
 A production-grade, fully open-source tray system for React Native inspired by [Family](https://benji.org/family-values), supporting Expo and bare workflows. Built with TypeScript, Reanimated, and best industry practices.
 

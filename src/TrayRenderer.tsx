@@ -1,3 +1,9 @@
+/**
+ * TrayRenderer.tsx
+ *
+ * Renders a single tray component with animation and keyboard adjustment support.
+ * Handles tray position, animation, and keyboard-aware behavior for tray UI.
+ */
 import React, { useEffect } from 'react';
 import {
   View,
@@ -18,15 +24,30 @@ import Animated, {
   FadeOutDown,
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
+import type { EdgeInsets } from 'react-native-safe-area-context';
 
+/**
+ * Props for TrayRenderer component.
+ * @property trayKey - Unique key for the tray instance.
+ * @property trayProps - Props to pass to the tray component.
+ * @property config - Tray stack configuration.
+ * @property TrayComponent - The tray component to render.
+ * @property insets - Safe area insets for proper positioning.
+ */
 interface TrayRendererProps {
   trayKey: string;
   trayProps: unknown;
   config: TrayStackConfig;
   TrayComponent: React.ComponentType<Record<string, unknown>>;
-  insets: { bottom: number; left: number; right: number };
+  insets: EdgeInsets;
 }
 
+/**
+ * TrayRenderer
+ *
+ * Renders the given tray component with animation and keyboard-aware adjustments.
+ * Handles tray position, entry/exit animations, and safe area insets.
+ */
 export const TrayRenderer: React.FC<TrayRendererProps> = ({
   trayKey,
   trayProps,
@@ -69,9 +90,25 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     };
   }, [config.adjustForKeyboard, insets.bottom, trayBottom]);
 
-  const trayAnimatedStyle = useAnimatedStyle(() => ({
-    bottom: trayBottom.value,
-  }));
+  const trayAnimatedStyle = useAnimatedStyle(
+    () =>
+      config.stickToTop
+        ? {
+            top:
+              insets.top +
+              (typeof config.trayStyles?.top === 'number'
+                ? config.trayStyles?.top
+                : 0),
+          }
+        : {
+            bottom:
+              trayBottom.value +
+              (typeof config.trayStyles?.bottom === 'number'
+                ? config.trayStyles?.bottom
+                : 0),
+          },
+    [config.trayStyles]
+  );
 
   const {
     enteringAnimation = SlideInDown,
@@ -83,12 +120,12 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     <Animated.View
       style={[
         styles.tray,
-        trayAnimatedStyle,
         {
           left: insets.left + horizontalSpacing,
           right: insets.right + horizontalSpacing,
         },
         config.trayStyles,
+        trayAnimatedStyle,
       ]}
       layout={LinearTransition.easing(Easing.out(Easing.ease)).duration(150)}
       entering={enteringAnimation}

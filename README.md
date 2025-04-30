@@ -1,15 +1,51 @@
 # react-native-trays
 
+<!-- Demo Video -->
+<p align="center">
+  <video src="example/demo.mp4" width="320" height="640" autoplay loop muted playsinline style="border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.14);margin-bottom:16px;"></video>
+</p>
+
+A production-grade, fully open-source tray system for React Native, supporting Expo and bare workflows. Built with TypeScript, Reanimated, and best industry practices.
+
+---
+
+## Table of Contents
+
+- [Features](#-features)
+- [Installation](#-installation)
+- [Required Setup](#️-required-setup-reanimated--safe-area)
+- [Quick Usage](#-quick-usage)
+- [API Overview](#-api-overview)
+- [Advanced Guides](#-advanced-guides)
+- [Contributing](#-contributing)
+- [License](#license)
+
+---
+
 [![npm version](https://img.shields.io/npm/v/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![Downloads](https://img.shields.io/npm/dm/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://github.com/sivantha/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha/react-native-trays/actions)
+[![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha/react-native-trays/actions)
 
 A production-grade, fully open-source tray system for React Native inspired by [Family](https://benji.org/family-values), supporting Expo and bare workflows. Built with TypeScript, Reanimated, and best industry practices.
 
 ---
 
 ## ✨ Features
+
+- **Multiple tray stacks** with independent state
+- **Customizable animations** (Reanimated, slide, fade, custom)
+- **Keyboard awareness** (trays move above keyboard)
+- **Safe area** support
+- **Backdrop** with blur and dismiss options
+- **Customizable trays** (style, animation, dismiss behavior, spacing)
+- **ID- and key-based operations:** push, pop, replace, dismiss
+- **Hooks-based API** for great DX
+- **Expo + Bare workflow** compatible
+- **Strict TypeScript** and full type exports
+
+- **API Reference:** [API.md](./API.md)
+- **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo)
 
 - **API Reference:** [API.md](./API.md)
 - **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo)
@@ -28,11 +64,6 @@ A production-grade, fully open-source tray system for React Native inspired by [
 ---
 
 ## 🚀 Installation
-
-[![npm version](https://img.shields.io/npm/v/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
-[![Downloads](https://img.shields.io/npm/dm/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://github.com/sivantha/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha/react-native-trays/actions)
 
 ```sh
 # With npm
@@ -117,8 +148,6 @@ function YourApp() {
 ```
 
 ---
-
-<!-- See [API.md](./API.md) for the full API reference. -->
 
 ## 🎨 Customization
 

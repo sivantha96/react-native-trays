@@ -1,3 +1,9 @@
+/**
+ * TrayProvider.tsx
+ *
+ * Provides the TrayProvider React context component for managing tray stacks and rendering trays in a React Native app.
+ * This file contains the core logic for tray registration, stack management, and context propagation.
+ */
 import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -29,6 +35,13 @@ export interface TrayProviderProps<T extends TrayRegistry> {
 
 /**
  * TrayProvider: Manages tray stacks, context, and rendering.
+ *
+ * @template T - The tray registry type.
+ * @param trays - An object mapping tray keys to their components.
+ * @param children - React children to render inside the provider.
+ * @param stackConfigs - Optional per-stack configuration overrides.
+ *
+ * Provides context to manage multiple, optionally-configurable tray stacks and their lifecycle.
  */
 export const TrayProvider = <T extends TrayRegistry>({
   trays,

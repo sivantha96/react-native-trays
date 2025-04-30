@@ -1,3 +1,8 @@
+/**
+ * TrayStackRenderer.tsx
+ *
+ * Renders the active tray in a given stack, handling safe area insets and dynamic tray resolution.
+ */
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { TrayRegistry, TrayStackConfig } from './types';
 import { TrayRenderer } from './TrayRenderer';
@@ -8,6 +13,16 @@ interface StackTray {
   props: unknown;
 }
 
+/**
+ * TrayStackRenderer
+ *
+ * Renders the top-most (active) tray in the provided stack using the given configuration and tray registry.
+ *
+ * @template T - The tray registry type.
+ * @param stack - The current stack of trays.
+ * @param config - Tray stack configuration.
+ * @param trays - Registry mapping tray keys to tray components.
+ */
 export const TrayStackRenderer = <T extends TrayRegistry>({
   stack,
   config,

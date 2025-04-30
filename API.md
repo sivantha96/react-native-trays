@@ -1,77 +1,122 @@
 # API Reference: react-native-trays
 
+This document describes the full public API for the `react-native-trays` library. For usage examples, see [README.md](./README.md) and [EXAMPLE.md](./EXAMPLE.md).
+
 ## `TrayProvider`
+
+Wraps your app and provides tray stack context for managing trays.
 
 Provides tray stack context and renders trays. Wrap your app with this provider.
 
 ### Props
 
-- `trays: TrayRegistry` — Registry of tray components.
+- `trays: TrayRegistry` — Registry mapping tray keys to their React components.
 - `children: ReactNode` — App children.
-- `stackConfigs?: Record<string, TrayStackConfig>` — Optional stack-specific config.
+- `stackConfigs?: Record<string, TrayStackConfig>` — Optional per-stack configuration overrides.
+
+See [types.ts](./src/types.ts) for full type definitions.
 
 ### Example
 
 ```tsx
-// Define multiple tray components with different heights
+import { TrayProvider, useTrays } from 'react-native-trays';
+import { Button, Text } from 'react-native';
+
 const trays = {
-  ShortTray: {
-    component: ({ title, message }) => (
-      <View style={{ minHeight: 100, padding: 24 }}>
-        <Text>{title}</Text>
-        <Text>{message}</Text>
-      </View>
-    ),
-  },
-  TallTray: {
-    component: ({ items }) => (
-      <View style={{ minHeight: 400, padding: 24 }}>
-        <Text>Scrollable List</Text>
-        <ScrollView>
-          {items.map((item, index) => (
-            <View key={index}>
-              <Text>{item}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    ),
+  DemoTray: {
+    component: ({ text }: { text: string }) => <Text>{text}</Text>,
   },
 };
 
-// Configure different stack configurations
-const stackConfigs = {
-  main: {
-    backdropStyles: { backgroundColor: 'rgba(0,0,0,0.5)' },
-    trayStyles: { backgroundColor: 'white', borderRadius: 16 },
-    adjustForKeyboard: true,
-    dismissOnBackdropPress: true,
-  },
-  secondary: {
-    backdropStyles: { backgroundColor: 'rgba(0,0,0,0.3)' },
-    enteringAnimation: SlideInUp,
-    exitingAnimation: SlideOutDown,
-    dismissOnBackdropPress: false,
-  },
-};
-
-// App component with TrayProvider
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <TrayProvider trays={trays} stackConfigs={stackConfigs}>
-        <YourAppContent />
-      </TrayProvider>
-    </SafeAreaProvider>
+    <TrayProvider trays={trays}>
+      <HomeScreen />
+    </TrayProvider>
+  );
+}
+
+function HomeScreen() {
+  const traysApi = useTrays('main');
+  return (
+    <Button
+      title="Show Tray"
+      onPress={() => traysApi.push('DemoTray', { text: 'Hello from Tray!' })}
+    />
   );
 }
 ```
 
+ShortTray: {
+component: ({ title, message }) => (
+<View style={{ minHeight: 100, padding: 24 }}>
+<Text>{title}</Text>
+<Text>{message}</Text>
+</View>
+),
+},
+TallTray: {
+component: ({ items }) => (
+<View style={{ minHeight: 400, padding: 24 }}>
+<Text>Scrollable List</Text>
+<ScrollView>
+{items.map((item, index) => (
+<View key={index}>
+<Text>{item}</Text>
+</View>
+))}
+</ScrollView>
+</View>
+),
+},
+};
+
+// Configure different stack configurations
+const stackConfigs = {
+main: {
+backdropStyles: { backgroundColor: 'rgba(0,0,0,0.5)' },
+trayStyles: { backgroundColor: 'white', borderRadius: 16 },
+adjustForKeyboard: true,
+dismissOnBackdropPress: true,
+},
+secondary: {
+backdropStyles: { backgroundColor: 'rgba(0,0,0,0.3)' },
+enteringAnimation: SlideInUp,
+exitingAnimation: SlideOutDown,
+dismissOnBackdropPress: false,
+},
+};
+
+// App component with TrayProvider
+export default function App() {
+return (
+<SafeAreaProvider>
+<TrayProvider trays={trays} stackConfigs={stackConfigs}>
+<YourAppContent />
+</TrayProvider>
+</SafeAreaProvider>
+);
+}
+
+````
+
 ---
 
-## `useTrays<T>(stackId: string)`
+## `useTrays(stackId)`
 
-Hook to control trays in a stack. The generic type parameter `T` can be used to provide type safety for tray props.
+Hook to access tray stack manipulation functions for a specific stack. Throws if used outside of a `TrayProvider`.
+
+### Methods
+- `push(trayKey, props)` — Push a new tray onto the stack.
+- `pop()` — Pop the top-most tray from the stack.
+- `replaceById(trayId, props)` — Replace a tray by its unique ID.
+- `replace(trayKey, props)` — Replace the top-most tray by tray key.
+- `dismiss(trayKey)` — Dismiss a tray by tray key.
+- `dismissById(trayId)` — Dismiss a tray by its unique ID.
+- `dismissAll()` — Dismiss all trays in the stack.
+
+All methods are fully typed. See [types.ts](./src/types.ts) for generics and advanced usage.
+ The generic type parameter `T` can be used to provide type safety for tray props.
 
 ### Returns
 
@@ -89,19 +134,19 @@ Removes the most recently added tray from the stack.
 - If only one tray is left in the stack: Closes the tray completely.
 - If multiple trays exist in the stack: Transitions back to the previous tray.
 
-#### `replace(trayKey, props)`
-
-Replaces all instances of trays with the given key in the stack.
-
-- Useful for updating all trays of a specific type with new props.
-- Maintains the stack order but updates the content.
-
 #### `replaceById(trayId, props)`
 
 Replaces a specific tray instance by its unique ID.
 
 - More precise than `replace()` as it targets a single tray instance.
 - Preserves the stack structure while updating just one tray.
+
+#### `replace(trayKey, props)`
+
+Replaces all instances of trays with the given key in the stack.
+
+- Useful for updating all trays of a specific type with new props.
+- Maintains the stack order but updates the content.
 
 #### `dismiss(trayKey)`
 
@@ -126,8 +171,8 @@ Removes all trays from the stack, closing the tray UI completely.
 ```tsx
 function HomeScreen() {
   // Use multiple stacks
-  const mainTrays = useTrays('main');
-  const secondaryTrays = useTrays('secondary');
+  const mainTrays = useTrays('main'); // For general notifications
+  const secondaryTrays = useTrays('secondary'); // For modal-like overlays
 
   return (
     <View>
@@ -177,7 +222,7 @@ function HomeScreen() {
     </View>
   );
 }
-```
+````
 
 ---
 

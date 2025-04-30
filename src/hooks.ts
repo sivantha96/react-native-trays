@@ -1,9 +1,21 @@
+/**
+ * hooks.ts
+ *
+ * Provides custom React hooks for interacting with the tray stack context and managing trays.
+ */
 import { useContext } from 'react';
 import type { TrayProps, TrayContextType } from './types';
 import { TrayContext } from './context';
 
 /**
- * Hook to access tray functions
+ * useTrays
+ *
+ * Custom React hook to access tray stack manipulation functions for a specific stack.
+ * Throws an error if used outside of TrayProvider.
+ *
+ * @template T - The tray props type.
+ * @param stackId - The stack identifier to access.
+ * @returns Tray context functions for the given stack.
  */
 export const useTrays = <T extends TrayProps>(
   stackId: string

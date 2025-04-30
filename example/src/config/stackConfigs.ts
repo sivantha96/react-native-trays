@@ -16,12 +16,13 @@ export const stackConfigs: Record<string, TrayStackConfig> = {
   },
   secondary: {
     backdropStyles: { backgroundColor: 'rgba(0,0,0,0.3)' },
-    trayStyles: { borderRadius: 5 },
-    adjustForKeyboard: true,
+    trayStyles: { borderRadius: 5, top: 10 },
+    adjustForKeyboard: false,
     horizontalSpacing: 24,
     dismissOnBackdropPress: false,
     enteringAnimation: SlideInUp,
     exitingAnimation: SlideOutUp,
+    stickToTop: true,
   },
   modal: {
     backdropStyles: { backgroundColor: 'rgba(50,50,80,0.7)' },

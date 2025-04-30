@@ -1,6 +1,8 @@
 # Example Usage: react-native-trays
 
-Below is a simple example of how to use `react-native-trays` in your app. For a live demo, see the [Expo Snack](https://snack.expo.dev/) (link coming soon).
+Below is a simple example of how to use `react-native-trays` in your app. For advanced usage, see [README.md](./README.md) and [API.md](./API.md).
+
+Below is a simple example of how to use `react-native-trays` in your app. For a live demo, see the [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo).
 
 ```tsx
 import { TrayProvider, useTrays } from 'react-native-trays';
@@ -33,4 +35,4 @@ function HomeScreen() {
 
 ---
 
-For more advanced usage, see the full documentation in [README.md](./README.md).
+For advanced configuration (multiple stacks, custom animations, keyboard handling, etc.), see [README.md](./README.md) and [API.md](./API.md).

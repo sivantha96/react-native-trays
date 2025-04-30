@@ -46,7 +46,18 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "tray",
+    "bottom-sheet",
+    "modal",
+    "drawer",
+    "popup",
+    "react-native-component",
+    "react-native-ui",
+    "react-native-animation",
+    "reanimated",
+    "expo",
+    "mobile-ui"
   ],
   "repository": {
     "type": "git",

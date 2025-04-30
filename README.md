@@ -47,10 +47,10 @@ A production-grade, fully open-source tray system for React Native inspired by [
 - **Strict TypeScript** and full type exports
 
 - **API Reference:** [API.md](./API.md)
-- **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo)
+- **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
 
 - **API Reference:** [API.md](./API.md)
-- **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo)
+- **Live Demo:** [Expo Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
 
 - **Multiple tray stacks** with independent state
 - **Customizable animations** (Reanimated, slide, fade, custom)
@@ -103,7 +103,7 @@ See [API.md](./API.md) for a full reference of all types, hooks, and provider pr
 
 ## 🧑‍💻 Live Example
 
-Try it instantly on [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo) or see [EXPO_SNACK.md](./EXPO_SNACK.md).
+Try it instantly on [Expo Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays) or see [EXPO_SNACK.md](./EXPO_SNACK.md).
 
 ---
 
@@ -206,7 +206,7 @@ npm test
 
 ## 📱 Example & Expo Snack
 
-A live demo is available on [Expo Snack](https://snack.expo.dev/) _(link coming soon)_
+A live demo is available on [Expo Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
 
 ---
 

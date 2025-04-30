@@ -2,7 +2,7 @@
 
 Below is a simple example of how to use `react-native-trays` in your app. For advanced usage, see [README.md](./README.md) and [API.md](./API.md).
 
-Below is a simple example of how to use `react-native-trays` in your app. For a live demo, see the [Expo Snack](https://snack.expo.dev/@sivantha96/react-native-trays-demo).
+Below is a simple example of how to use `react-native-trays` in your app. For a live demo, see the [Expo Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays).
 
 ```tsx
 import { TrayProvider, useTrays } from 'react-native-trays';

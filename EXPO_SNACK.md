@@ -2,7 +2,7 @@
 
 Try out react-native-trays live:
 
-[![Open in Snack](https://snack.expo.dev/static/snack-expo-banner.svg)](https://snack.expo.dev/@sivantha96/react-native-trays-demo)
+[![Open in Snack](https://snack.expo.dev/static/snack-expo-banner.svg)](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
 
 ---
 

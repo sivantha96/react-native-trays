@@ -86,6 +86,7 @@
     "react-native-reanimated": "^3.17.5",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-uuid": "^2.0.3",
+    "react-test-renderer": "^18.3.1",
     "release-it": "^17.10.0",
     "typescript": "^5.2.2"
   },

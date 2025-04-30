@@ -4,13 +4,14 @@ import {
   SlideOutDown,
   FadeIn,
   FadeOut,
+  SlideOutUp,
+  SlideInDown,
 } from 'react-native-reanimated';
 
 // Configure different stack configurations
 export const stackConfigs: Record<string, TrayStackConfig> = {
   main: {
     horizontalSpacing: 16,
-    defaultBottomSpacing: 16,
     dismissOnBackdropPress: true,
   },
   secondary: {
@@ -18,19 +19,31 @@ export const stackConfigs: Record<string, TrayStackConfig> = {
     trayStyles: { borderRadius: 5 },
     adjustForKeyboard: true,
     horizontalSpacing: 24,
-    defaultBottomSpacing: 24,
     dismissOnBackdropPress: false,
     enteringAnimation: SlideInUp,
-    exitingAnimation: SlideOutDown,
+    exitingAnimation: SlideOutUp,
   },
   modal: {
     backdropStyles: { backgroundColor: 'rgba(50,50,80,0.7)' },
     trayStyles: { backgroundColor: 'white', borderRadius: 24 },
     adjustForKeyboard: false,
     horizontalSpacing: 8,
-    defaultBottomSpacing: 32,
     dismissOnBackdropPress: true,
     enteringAnimation: FadeIn,
     exitingAnimation: FadeOut,
+  },
+  family: {
+    backdropStyles: {
+      backgroundColor: 'rgba(0,0,0,0.2)',
+    },
+    trayStyles: {
+      borderRadius: 40,
+    },
+    horizontalSpacing: 16,
+    dismissOnBackdropPress: true,
+    disableBackgroundBlur: true,
+    enteringAnimation: SlideInDown,
+    exitingAnimation: SlideOutDown,
+    adjustForKeyboard: true,
   },
 };

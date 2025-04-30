@@ -34,8 +34,8 @@ export interface TrayStackConfig {
   enteringAnimation?: EntryOrExitLayoutType;
   exitingAnimation?: EntryOrExitLayoutType;
   horizontalSpacing?: number;
-  defaultBottomSpacing?: number;
   dismissOnBackdropPress?: boolean;
+  disableBackgroundBlur?: boolean;
 }
 
 export interface TrayContextType<T extends Record<string, unknown>> {

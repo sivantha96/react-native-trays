@@ -5,18 +5,17 @@ import {
   Keyboard,
   type KeyboardEvent,
   StyleSheet,
-  TouchableOpacity,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   Easing,
-  FadeIn,
-  FadeOut,
   LinearTransition,
   SlideInDown,
   SlideOutDown,
+  FadeInDown,
+  FadeOutDown,
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
 
@@ -25,7 +24,6 @@ interface TrayRendererProps {
   trayProps: unknown;
   config: TrayStackConfig;
   TrayComponent: React.ComponentType<Record<string, unknown>>;
-  onDismiss: () => void;
   insets: { bottom: number; left: number; right: number };
 }
 
@@ -34,34 +32,25 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
   trayProps,
   config,
   TrayComponent,
-  onDismiss,
   insets,
 }) => {
-  const trayBottom = useSharedValue(
-    insets.bottom + (config.defaultBottomSpacing || 20)
-  );
+  const trayBottom = useSharedValue(insets.bottom);
 
   useEffect(() => {
     if (!config.adjustForKeyboard) return;
 
     const handleKeyboardShow = (e: KeyboardEvent) => {
-      trayBottom.value = withTiming(
-        e.endCoordinates.height + (config.defaultBottomSpacing || 20),
-        {
-          duration: Platform.OS === 'ios' ? 60 : 250,
-          easing: Easing.out(Easing.ease),
-        }
-      );
+      trayBottom.value = withTiming(e.endCoordinates.height + 20, {
+        duration: Platform.OS === 'ios' ? 60 : 250,
+        easing: Easing.out(Easing.ease),
+      });
     };
 
     const handleKeyboardHide = () => {
-      trayBottom.value = withTiming(
-        insets.bottom + (config.defaultBottomSpacing || 20),
-        {
-          duration: Platform.OS === 'ios' ? 90 : 200,
-          easing: Easing.out(Easing.ease),
-        }
-      );
+      trayBottom.value = withTiming(insets.bottom, {
+        duration: Platform.OS === 'ios' ? 90 : 200,
+        easing: Easing.out(Easing.ease),
+      });
     };
 
     const showSub =
@@ -78,12 +67,7 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       showSub.remove();
       hideSub.remove();
     };
-  }, [
-    config.adjustForKeyboard,
-    insets.bottom,
-    trayBottom,
-    config.defaultBottomSpacing,
-  ]);
+  }, [config.adjustForKeyboard, insets.bottom, trayBottom]);
 
   const trayAnimatedStyle = useAnimatedStyle(() => ({
     bottom: trayBottom.value,
@@ -112,20 +96,9 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     >
       <View style={styles.content}>
         <Animated.View
-          key="close-btn"
-          pointerEvents="box-none"
-          style={styles.closeBtnWrapper}
-        >
-          <TouchableOpacity
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            onPress={onDismiss}
-            style={styles.closeBtn}
-          />
-        </Animated.View>
-        <Animated.View
           key={trayKey}
-          entering={FadeIn.duration(180)}
-          exiting={FadeOut.duration(120)}
+          entering={FadeInDown.duration(180)}
+          exiting={FadeOutDown.duration(120)}
         >
           <TrayComponent {...(trayProps ?? {})} />
         </Animated.View>
@@ -154,18 +127,13 @@ const styles = StyleSheet.create({
   closeBtnWrapper: {
     position: 'absolute',
     zIndex: 1,
-    top: 10,
-    right: 10,
+    top: 20,
+    right: 20,
     overflow: 'hidden',
   },
   closeBtn: {
     width: 30,
     height: 30,
-    borderRadius: 15,
-    backgroundColor: 'red',
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
+    zIndex: 2,
   },
 });

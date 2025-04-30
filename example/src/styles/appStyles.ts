@@ -6,7 +6,7 @@ export const appStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f7f7f7',
-    paddingVertical: 40,
+    paddingVertical: 80,
     paddingHorizontal: 20,
   },
   header: {

@@ -1,9 +1,24 @@
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
-const CloseButton = ({ onClose }: { onClose: () => void }) => {
+const CloseButton = ({
+  onPress,
+  style,
+}: {
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}) => {
   return (
-    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-      <Image style={styles.closeIcon} source={require('../assets/close.png')} />
+    <TouchableOpacity onPress={onPress} style={[styles.closeButton, style]}>
+      <Image
+        style={styles.closeIcon}
+        source={require('../../assets/close.png')}
+      />
     </TouchableOpacity>
   );
 };
@@ -12,16 +27,16 @@ export default CloseButton;
 
 const styles = StyleSheet.create({
   closeButton: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     borderRadius: 15,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#F9F9FB',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    padding: 5,
   },
   closeIcon: {
-    width: 10,
-    height: 10,
+    width: 12,
+    height: 12,
   },
 });

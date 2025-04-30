@@ -1,4 +1,4 @@
-import React, { useCallback, useState, type ReactNode } from 'react';
+import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FadeIn, FadeOut } from 'react-native-reanimated';
 let BlurView: React.ComponentType<any> | null = null;
@@ -18,7 +18,6 @@ const defaultStackConfig: TrayStackConfig = {
   trayStyles: {},
   adjustForKeyboard: true,
   horizontalSpacing: 20,
-  defaultBottomSpacing: 20,
   dismissOnBackdropPress: true,
 };
 
@@ -37,15 +36,35 @@ export const TrayProvider = <T extends TrayRegistry>({
   stackConfigs = {},
 }: TrayProviderProps<T>) => {
   const [stackMap, setStackMap] = useState<
-    Record<string, Array<{ id: string; tray: string; props: unknown }>>
+    Record<
+      string,
+      Array<{
+        id: string;
+        tray: string;
+        stackId: string;
+        props: unknown;
+      }>
+    >
   >({});
 
   const modifyStack = useCallback(
     (
       stackId: string,
       updater: (
-        stack: Array<{ id: string; tray: string; props: unknown }>
-      ) => Array<{ id: string; tray: string; props: unknown }> | undefined
+        stack: Array<{
+          id: string;
+          tray: string;
+          stackId: string;
+          props: unknown;
+        }>
+      ) =>
+        | Array<{
+            id: string;
+            tray: string;
+            stackId: string;
+            props: unknown;
+          }>
+        | undefined
     ) => {
       setStackMap((prev) => {
         const updated = updater(prev[stackId] || []);
@@ -64,7 +83,7 @@ export const TrayProvider = <T extends TrayRegistry>({
     (stackId: string, trayKey: string, props: unknown) => {
       modifyStack(stackId, (stack) => [
         ...stack,
-        { id: uuid.v4().toString(), tray: trayKey, props },
+        { id: uuid.v4().toString(), tray: trayKey, stackId, props },
       ]);
     },
     [modifyStack]
@@ -98,32 +117,34 @@ export const TrayProvider = <T extends TrayRegistry>({
     [push, modifyStack]
   );
 
-  const activeStacks = Object.entries(stackMap);
+  const activeStacks = useMemo(() => Object.entries(stackMap), [stackMap]);
 
   return (
     <TrayContext.Provider value={contextValue}>
       {children}
-      {activeStacks.length > 0 && (
-        <Animated.View
-          style={styles.backdrop}
-          entering={FadeIn}
-          exiting={FadeOut}
-        >
-          {BlurView ? (
-            <BlurView style={styles.blurView} />
-          ) : (
-            <View style={styles.blurViewPlaceholder} />
-          )}
-        </Animated.View>
-      )}
+
       {activeStacks.map(([stackId, stack]) => (
-        <TrayStackRenderer
-          key={stackId}
-          stack={stack}
-          config={stackConfigs[stackId] || defaultStackConfig}
-          trays={trays}
-          onBackdropPress={() => contextValue(stackId).pop()}
-        />
+        <React.Fragment key={stackId}>
+          <Animated.View
+            style={[styles.backdrop, stackConfigs[stackId]?.backdropStyles]}
+            entering={FadeIn}
+            exiting={FadeOut}
+            onTouchEnd={() => {
+              contextValue(stackId).pop();
+            }}
+          >
+            {BlurView && !stackConfigs[stackId]?.disableBackgroundBlur ? (
+              <BlurView style={styles.blurView} />
+            ) : (
+              <View style={styles.blurViewPlaceholder} />
+            )}
+          </Animated.View>
+          <TrayStackRenderer
+            stack={stack}
+            config={stackConfigs[stackId] || defaultStackConfig}
+            trays={trays}
+          />
+        </React.Fragment>
       ))}
     </TrayContext.Provider>
   );
@@ -143,6 +164,5 @@ const styles = StyleSheet.create({
   },
   blurViewPlaceholder: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
 });

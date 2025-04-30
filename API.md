@@ -231,7 +231,6 @@ interface TrayStackConfig {
   backdropStyles?: ViewStyle;
   trayStyles?: ViewStyle;
   horizontalSpacing?: number; // Horizontal padding from screen edges
-  defaultBottomSpacing?: number; // Bottom spacing when keyboard is hidden
 
   // Behavior
   adjustForKeyboard?: boolean; // Move tray above keyboard when it appears

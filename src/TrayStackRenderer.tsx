@@ -12,17 +12,16 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
   stack,
   config,
   trays,
-  onBackdropPress,
 }: {
   stack: StackTray[];
   config: TrayStackConfig;
   trays: T;
-  onBackdropPress: () => void;
 }) => {
   const insets = useSafeAreaInsets();
   const activeTray = stack[stack.length - 1];
   if (!activeTray) return null;
   const TrayComponent = trays[activeTray.tray]?.component;
+
   return (
     <>
       {TrayComponent && (
@@ -31,7 +30,6 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
           trayProps={activeTray.props}
           config={config}
           TrayComponent={TrayComponent}
-          onDismiss={onBackdropPress}
           insets={insets}
         />
       )}

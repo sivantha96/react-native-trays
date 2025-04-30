@@ -12,12 +12,7 @@ describe('TrayStackRenderer', () => {
   ];
   it('renders the top tray in the stack', () => {
     const { getByText } = render(
-      <TrayStackRenderer
-        stack={stack}
-        config={{}}
-        trays={trays}
-        onBackdropPress={jest.fn()}
-      />
+      <TrayStackRenderer stack={stack} config={{}} trays={trays} />
     );
     expect(getByText('Second')).toBeTruthy();
   });

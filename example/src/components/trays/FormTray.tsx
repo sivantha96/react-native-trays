@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Switch, Button } from 'react-native';
 import { trayStyles } from '../../styles/trayStyles';
-import CloseButton from '../CloseButton';
 
 export interface FormTrayProps {
   onSubmit: (text: string) => void;
-  onClose: () => void;
 }
 
-export const FormTray: React.FC<FormTrayProps> = ({ onSubmit, onClose }) => {
+export const FormTray: React.FC<FormTrayProps> = ({ onSubmit }) => {
   const [text, setText] = useState('');
 
   return (
     <View style={[trayStyles.trayContent, trayStyles.mediumTray]}>
       <View style={trayStyles.trayHeader}>
         <Text style={trayStyles.trayTitle}>Input Form</Text>
-        <CloseButton onClose={onClose} />
       </View>
       <TextInput
         style={trayStyles.input}
@@ -28,7 +25,6 @@ export const FormTray: React.FC<FormTrayProps> = ({ onSubmit, onClose }) => {
         <Switch value={true} />
       </View>
       <View style={trayStyles.buttonRow}>
-        <Button title="Cancel" onPress={onClose} />
         <View style={trayStyles.buttonSpacer} />
         <Button title="Submit" onPress={() => onSubmit(text)} />
       </View>

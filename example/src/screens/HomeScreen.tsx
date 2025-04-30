@@ -9,6 +9,7 @@ export const HomeScreen: React.FC = () => {
   const mainTrays = useTrays<TrayProps>('main');
   const secondaryTrays = useTrays<TrayProps>('secondary');
   const modalTrays = useTrays<TrayProps>('modal');
+  const familyTrays = useTrays<TrayProps>('family');
 
   // Generate sample data for tall tray
   const generateItems = () => {
@@ -21,6 +22,14 @@ export const HomeScreen: React.FC = () => {
     <ScrollView contentContainerStyle={appStyles.container}>
       <Text style={appStyles.header}>React Native Trays Demo</Text>
 
+      <Text style={appStyles.subheader}>Family Stack (Default Animations)</Text>
+      <View style={appStyles.buttonGroup}>
+        <Button
+          title="Wallet"
+          onPress={() => familyTrays.push(TrayEnum.WalletDetails, {})}
+        />
+      </View>
+
       <Text style={appStyles.subheader}>Main Stack (Default Animations)</Text>
       <View style={appStyles.buttonGroup}>
         <Button
@@ -29,7 +38,6 @@ export const HomeScreen: React.FC = () => {
             mainTrays.push(TrayEnum.Short, {
               title: 'Simple Notification',
               message: 'This is a short tray with minimal content',
-              onClose: () => mainTrays.pop(),
             })
           }
         />
@@ -42,7 +50,6 @@ export const HomeScreen: React.FC = () => {
                 Alert.alert('Form Submitted', `Submitted: ${text}`);
                 mainTrays.pop();
               },
-              onClose: () => mainTrays.pop(),
             })
           }
         />
@@ -59,7 +66,6 @@ export const HomeScreen: React.FC = () => {
               imageUrl:
                 'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
               caption: 'Beautiful landscape from Unsplash',
-              onClose: () => secondaryTrays.pop(),
               // Add function to open another tray from inside this one
               onShowForm: () => {
                 secondaryTrays.push(TrayEnum.Form, {
@@ -70,7 +76,6 @@ export const HomeScreen: React.FC = () => {
                     );
                     secondaryTrays.pop();
                   },
-                  onClose: () => secondaryTrays.pop(),
                 });
               },
             })
@@ -135,7 +140,6 @@ export const HomeScreen: React.FC = () => {
               mainTrays.push(TrayEnum.Short, {
                 title: 'First Tray (Short)',
                 message: 'Push another tray to see stacking behavior',
-                onClose: () => mainTrays.pop(),
               });
               // Then push a form tray on top
               mainTrays.push(TrayEnum.Form, {
@@ -143,7 +147,6 @@ export const HomeScreen: React.FC = () => {
                   Alert.alert('Second Tray', `You entered: ${text}`);
                   mainTrays.pop();
                 },
-                onClose: () => mainTrays.pop(),
               });
             }}
           />
@@ -156,7 +159,6 @@ export const HomeScreen: React.FC = () => {
               mainTrays.push(TrayEnum.Short, {
                 title: 'Stack Level 1',
                 message: 'This is the bottom tray in the stack',
-                onClose: () => mainTrays.pop(),
               });
 
               // Second: Image tray
@@ -164,7 +166,6 @@ export const HomeScreen: React.FC = () => {
                 imageUrl:
                   'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
                 caption: 'Stack Level 2 - A colorful gradient',
-                onClose: () => mainTrays.pop(),
                 onShowForm: () => {},
               });
 
@@ -190,19 +191,16 @@ export const HomeScreen: React.FC = () => {
               mainTrays.push(TrayEnum.Short, {
                 title: 'Main Stack',
                 message: 'This tray is in the main stack',
-                onClose: () => mainTrays.pop(),
               });
 
               secondaryTrays.push(TrayEnum.Short, {
                 title: 'Secondary Stack',
                 message: 'This tray is in the secondary stack',
-                onClose: () => secondaryTrays.pop(),
               });
 
               modalTrays.push(TrayEnum.Short, {
                 title: 'Modal Stack',
                 message: 'This tray is in the modal stack',
-                onClose: () => modalTrays.pop(),
               });
 
               // Show an alert explaining what's happening
@@ -226,9 +224,7 @@ export const HomeScreen: React.FC = () => {
             title="Push Multiple & Pop"
             onPress={() => {
               // Push three trays in sequence
-              const commonProps = {
-                onClose: () => mainTrays.pop(),
-              };
+              const commonProps = {};
 
               // First tray
               mainTrays.push(TrayEnum.Short, {
@@ -367,7 +363,6 @@ export const HomeScreen: React.FC = () => {
               secondaryTrays.push(TrayEnum.Short, {
                 title: 'Original Tray',
                 message: 'This tray will be replaced by key',
-                onClose: () => secondaryTrays.pop(),
               });
 
               // Then replace it after a delay
@@ -428,7 +423,6 @@ Click Replace to update this tray by its ID`,
               // Push a tray to the main stack
               mainTrays.push(TrayEnum.Form, {
                 onSubmit: () => {},
-                onClose: () => mainTrays.pop(),
               });
 
               // After a delay, replace it with a different type
@@ -467,7 +461,6 @@ Click Replace to update this tray by its ID`,
                   secondaryTrays.push(TrayEnum.Short, {
                     title: `Short Tray ${i + 1}`,
                     message: `This is short tray instance #${i + 1}`,
-                    onClose: () => secondaryTrays.pop(),
                   });
                 }
 
@@ -520,12 +513,10 @@ Click Replace to update this tray by its ID`,
               mainTrays.push(TrayEnum.Short, {
                 title: 'Short Tray 1',
                 message: 'This will be dismissed by key',
-                onClose: () => mainTrays.pop(),
               });
 
               mainTrays.push(TrayEnum.Form, {
                 onSubmit: () => {},
-                onClose: () => mainTrays.pop(),
               });
 
               // Add an alert to dismiss by key
@@ -556,13 +547,11 @@ Click Replace to update this tray by its ID`,
               secondaryTrays.push(TrayEnum.Short, {
                 title: `Tray ID: ${id1}`,
                 message: 'Click to dismiss this specific tray',
-                onClose: () => secondaryTrays.dismissById(id1),
               });
 
               secondaryTrays.push(TrayEnum.Short, {
                 title: `Tray ID: ${id2}`,
                 message: 'Click to dismiss this specific tray',
-                onClose: () => secondaryTrays.dismissById(id2),
               });
             }}
           />
@@ -576,19 +565,16 @@ Click Replace to update this tray by its ID`,
               mainTrays.push(TrayEnum.Short, {
                 title: 'Main Stack Tray',
                 message: 'This tray will be dismissed with all others',
-                onClose: () => mainTrays.pop(),
               });
 
               secondaryTrays.push(TrayEnum.Form, {
                 onSubmit: () => {},
-                onClose: () => secondaryTrays.pop(),
               });
 
               modalTrays.push(TrayEnum.Image, {
                 imageUrl:
                   'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
                 caption: 'Modal Stack Tray',
-                onClose: () => modalTrays.pop(),
                 onShowForm: () => {},
               });
 

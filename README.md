@@ -41,12 +41,15 @@ yarn add react-native-trays
 npm install react-native-trays
 ```
 
-### Peer dependencies
+### Install required peer dependencies
 
-- `react-native-reanimated`
-- `react-native-safe-area-context`
-- `react-native-uuid`
-- `expo-blur` (optional, for Expo backdrop blur)
+```sh
+# Install all required peer dependencies
+npm install react-native-reanimated react-native-safe-area-context react-native-uuid
+
+# (Optional, for Expo users who want backdrop blur)
+npm install expo-blur
+```
 
 ---
 

@@ -25,7 +25,7 @@ A production-grade, fully open-source tray system for React Native, supporting E
 [![npm version](https://img.shields.io/npm/v/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![Downloads](https://img.shields.io/npm/dm/react-native-trays.svg)](https://www.npmjs.com/package/react-native-trays)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha/react-native-trays/actions)
+[![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/ci.yml/badge.svg)](https://github.com/sivantha96/react-native-trays/actions)
 
 A production-grade, fully open-source tray system for React Native inspired by [Family](https://benji.org/family-values), supporting Expo and bare workflows. Built with TypeScript, Reanimated, and best industry practices.
 

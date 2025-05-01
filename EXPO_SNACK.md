@@ -1,83 +1,125 @@
-# Expo Snack Example
+# Live Demo: Expo Snack
 
-Try out react-native-trays live:
+Experience react-native-trays in action with our interactive demo:
 
-[Open in Snack](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
-
----
-
-## Comprehensive Demo Features
-
-### Multiple Tray Types
-
-- **Short Tray**: Simple notification with minimal height
-- **Form Tray**: Interactive form with text input and submission
-- **Tall Tray**: Scrollable list with many items
-- **Image Tray**: Media content with images and captions
-- **Wallet Details Tray**: Displays wallet information with actions
-- **Edit Wallet Tray**: Form for editing wallet information
-- **View Private Key Tray**: Secure display of private key information
-
-### Multiple Stacks with Different Configurations
-
-- **Family Stack**: Default animations with custom styling for wallet-related trays (inspired by the Family crypto app)
-- **Main Stack**: Default animations with standard backdrop
-- **Secondary Stack**: Slide animations (SlideInUp/SlideOutUp) with non-dismissible backdrop
-- **Modal Stack**: Fade animations (FadeIn/FadeOut) with custom styling
-
-### Animation Varieties
-
-- Default slide animations
-- Custom SlideInUp/SlideOutUp animations
-- FadeIn/FadeOut animations
-- SlideInDown/SlideOutDown animations
-
-### Interactive Features
-
-- Form submission with text input
-- Scrollable content with many items
-- Stack-specific backdrop behavior
-- Push, pop, replace, and dismiss operations
-- Replace by ID and replace by key functionality
-- Selective dismissal of specific tray types
-- Keyboard awareness (adjusts when keyboard appears)
-- Cross-stack interactions
-
-### Styling & Customization
-
-- Different tray heights and styles
-- Custom backdrop colors and opacity
-- Custom border radius configurations
-- Background blur options
-- Font customization with custom typefaces
+[![Open in Snack](https://snack.expo.dev/static/snack-expo-banner.svg)](https://snack.expo.dev/@sivanthaeatme/react-native-trays)
 
 ---
 
-## How to Use the Demo
+## Demo Overview
 
-1. **Family Stack**: Try the Wallet tray to see wallet management features inspired by the Family crypto app
-2. **Main Stack**: Try the Short and Form trays with default animations
-3. **Secondary Stack**: Open the Image tray and try replacing it with a Form tray
-4. **Modal Stack**: Open the tall scrollable list tray
-5. **API Testing**: Explore the API Testing Playground section for advanced operations:
-   - Push Operations: Test stacking multiple trays and cross-stack interactions
-   - Pop Operations: Test pop with animation and pop to root functionality
-   - Replace Operations: Test replace by key, replace by ID, and replace with animation
-   - Dismiss Operations: Test dismiss by key, dismiss by ID, and selective dismissal
+This live demo showcases the full capabilities of react-native-trays with a React Navigation-like API, multiple tray stacks, and various tray interactions.
+
+### Featured Tray Components
+
+| Tray Type            | Description            | Features                                        |
+| -------------------- | ---------------------- | ----------------------------------------------- |
+| **Short Tray**       | Simple notification    | Minimal height, quick info display              |
+| **Form Tray**        | Interactive input form | Text input, form submission, keyboard awareness |
+| **Tall Tray**        | Scrollable content     | Long content handling, scroll behavior          |
+| **Image Tray**       | Media display          | Image rendering, captions, media controls       |
+| **Wallet Details**   | Financial information  | Multiple action buttons, styled UI              |
+| **Edit Wallet**      | Data editing interface | Form validation, save functionality             |
+| **View Private Key** | Secure information     | Security-focused UI, copy options               |
+
+### Multiple Stack Configurations
+
+| Stack Name          | Purpose               | Configuration                                  |
+| ------------------- | --------------------- | ---------------------------------------------- |
+| **Family Stack**    | Wallet management     | Custom styling inspired by Family crypto app   |
+| **Main Stack**      | General notifications | Default animations with standard backdrop      |
+| **Secondary Stack** | Modal-like overlays   | Slide animations with non-dismissible backdrop |
+| **Modal Stack**     | Full-screen content   | Fade animations with custom styling            |
+
+### Animation Showcase
+
+| Animation Type    | Description                       | Use Case                 |
+| ----------------- | --------------------------------- | ------------------------ |
+| **Default Slide** | Standard bottom-to-top slide      | General purpose trays    |
+| **Custom Slide**  | Customized SlideInUp/SlideOutUp   | Modal-like interactions  |
+| **Fade**          | Smooth FadeIn/FadeOut transitions | Subtle notifications     |
+| **Custom Spring** | Bouncy spring animations          | Attention-grabbing trays |
+
+### React Navigation-like API
+
+The demo showcases the library's familiar API that resembles React Navigation:
+
+```tsx
+// Similar to useNavigation() in React Navigation
+const { push, pop, replace } = useTrays('stackId');
+
+// Similar to navigation.navigate()
+push('DetailsTray', { id: '123' });
+
+// Similar to navigation.goBack()
+pop();
+
+// Similar to navigation.replace()
+replace('FormTray', { onSubmit: handleSubmit });
+```
+
+### TypeScript Integration
+
+The demo demonstrates full TypeScript support with generics for type-safe tray props:
+
+```tsx
+// Type-safe hook with your TrayProps type map
+const { push, pop } = useTrays<TrayProps>('family');
+
+// TypeScript enforces correct props for each tray
+push(TrayEnum.WalletDetails, {
+  /* type-checked props */
+});
+```
 
 ---
 
-## Advanced API Demonstrations
+## Interactive Demo Guide
 
-The example also showcases advanced API features:
+### Basic Operations
 
-- Triple stacking of trays
-- Cross-stack interactions
-- Pop to root operations
-- Replace all instances of a specific tray type
-- Dismiss with callbacks
-- Selective dismissal of specific tray types
+1. **Explore Different Stacks**
+
+   - **Family Stack**: Try the Wallet management flow with nested trays
+   - **Main Stack**: Experience simple notifications with default animations
+   - **Secondary Stack**: See modal-like overlays with custom slide animations
+   - **Modal Stack**: View full-screen content with fade transitions
+
+2. **Try Core API Features**
+   - Push new trays onto a stack
+   - Pop back to previous trays
+   - Replace existing trays with new content
+   - Dismiss specific trays or entire stacks
+
+### Advanced Features
+
+1. **API Testing Playground**
+
+   - **Stack Management**: Test multiple stacked trays and transitions
+   - **ID-based Operations**: Target specific tray instances with unique IDs
+   - **Cross-stack Interactions**: Trigger trays from one stack to another
+   - **Animation Customization**: See different animation configurations
+
+2. **UI/UX Patterns**
+   - Keyboard-aware forms that adjust when the keyboard appears
+   - Scrollable content handling in trays
+   - Backdrop blur and press-to-dismiss behaviors
+   - Custom styling and theming options
 
 ---
 
-For full source code, see the `/example` directory in this repo.
+## Implementation Details
+
+The demo showcases several advanced patterns:
+
+- **Stack Composition**: Multiple independent tray stacks with different configurations
+- **Tray Chaining**: Sequential tray flows for multi-step processes
+- **State Preservation**: Maintaining state between tray transitions
+- **Responsive Design**: Adapting to different screen sizes and orientations
+- **Animation Customization**: Fine-tuning animations for specific interactions
+
+---
+
+## Source Code
+
+For the complete source code of this demo, see the `/example` directory in the [GitHub repository](https://github.com/sivantha96/react-native-trays).

@@ -1,12 +1,26 @@
 # API Reference: react-native-trays
 
-This document describes the full public API for the `react-native-trays` library. For usage examples, see [README.md](./README.md) and [EXAMPLE.md](./EXAMPLE.md).
+This document describes the complete API for the `react-native-trays` library. For usage examples, see [README.md](./README.md) and [EXAMPLE.md](./EXAMPLE.md).
 
-## `TrayProvider`
+## Table of Contents
 
-Wraps your app and provides tray stack context for managing trays.
+- [Components](#components)
+  - [TrayProvider](#trayprovider)
+- [Hooks](#hooks)
+  - [useTrays](#usetrays)
+- [TypeScript Support](#typescript-support)
+  - [Type Definitions](#type-definitions)
+  - [Generic Type Parameters](#generic-type-parameters)
+  - [Type-Safe API Usage](#type-safe-api-usage)
+- [Configuration](#configuration)
+  - [TrayStackConfig](#traystackconfig)
+  - [TrayRegistry](#trayregistry)
 
-Provides tray stack context and renders trays. Wrap your app with this provider.
+## Components
+
+### `TrayProvider`
+
+The root component that provides tray stack context and renders trays. Wrap your app with this provider.
 
 ### Props
 
@@ -102,11 +116,24 @@ return (
 
 ---
 
-## `useTrays(stackId)`
+## Hooks
+
+### `useTrays`
 
 Hook to access tray stack manipulation functions for a specific stack. Throws if used outside of a `TrayProvider`.
 
-### Methods
+```tsx
+const { push, pop, replace, replaceById, dismiss, dismissById, dismissAll } = useTrays(stackId);
+```
+
+#### Parameters
+
+- `stackId: string` — Identifier for the tray stack to manipulate.
+
+#### Returns
+
+An object containing the following methods:
+
 - `push(trayKey, props)` — Push a new tray onto the stack.
 - `pop()` — Pop the top-most tray from the stack.
 - `replaceById(trayId, props)` — Replace a tray by its unique ID.
@@ -115,54 +142,72 @@ Hook to access tray stack manipulation functions for a specific stack. Throws if
 - `dismissById(trayId)` — Dismiss a tray by its unique ID.
 - `dismissAll()` — Dismiss all trays in the stack.
 
-All methods are fully typed. See [types.ts](./src/types.ts) for generics and advanced usage.
- The generic type parameter `T` can be used to provide type safety for tray props.
+All methods are fully typed. For TypeScript support, see the [TypeScript Support](#typescript-support) section below.
 
-### Returns
+#### Method Details
 
-#### `push(trayKey, props)`
+##### `push(trayKey, props)`
 
 Pushes a new tray onto the stack.
 
-- If no trays are open in this stack: Opens a new tray.
-- If trays already exist in this stack: Transitions the currently visible tray to the new tray.
+- **Parameters**:
+  - `trayKey: string` - The key of the tray to push (must be registered in the tray registry)
+  - `props: any` - Props to pass to the tray component
+- **Behavior**:
+  - If no trays are open: Opens a new tray
+  - If trays already exist: Transitions the currently visible tray to the new tray
 
-#### `pop()`
+##### `pop()`
 
 Removes the most recently added tray from the stack.
 
-- If only one tray is left in the stack: Closes the tray completely.
-- If multiple trays exist in the stack: Transitions back to the previous tray.
+- **Behavior**:
+  - If only one tray is left: Closes the tray completely
+  - If multiple trays exist: Transitions back to the previous tray
 
-#### `replaceById(trayId, props)`
+##### `replaceById(trayId, props)`
 
 Replaces a specific tray instance by its unique ID.
 
-- More precise than `replace()` as it targets a single tray instance.
-- Preserves the stack structure while updating just one tray.
+- **Parameters**:
+  - `trayId: string` - The unique ID of the tray instance to replace
+  - `props: any` - New props to pass to the tray component
+- **Behavior**:
+  - More precise than `replace()` as it targets a single tray instance
+  - Preserves the stack structure while updating just one tray
 
-#### `replace(trayKey, props)`
+##### `replace(trayKey, props)`
 
 Replaces all instances of trays with the given key in the stack.
 
-- Useful for updating all trays of a specific type with new props.
-- Maintains the stack order but updates the content.
+- **Parameters**:
+  - `trayKey: string` - The key of the tray type to replace
+  - `props: any` - New props to pass to the tray component(s)
+- **Behavior**:
+  - Updates all trays of a specific type with new props
+  - Maintains the stack order but updates the content
 
-#### `dismiss(trayKey)`
+##### `dismiss(trayKey)`
 
 Removes all trays with the given key from the stack.
 
-- If removing the last tray: Closes the tray UI completely.
-- If other trays remain: Shows the next tray in the stack.
+- **Parameters**:
+  - `trayKey: string` - The key of the tray type to dismiss
+- **Behavior**:
+  - If removing the last tray: Closes the tray UI completely
+  - If other trays remain: Shows the next tray in the stack
 
-#### `dismissById(trayId)`
+##### `dismissById(trayId)`
 
 Removes a specific tray instance by its unique ID.
 
-- More precise than `dismiss()` as it targets a single tray instance.
-- If removing the last tray: Closes the tray UI completely.
+- **Parameters**:
+  - `trayId: string` - The unique ID of the tray instance to dismiss
+- **Behavior**:
+  - More precise than `dismiss()` as it targets a single tray instance
+  - If removing the last tray: Closes the tray UI completely
 
-#### `dismissAll()`
+##### `dismissAll()`
 
 Removes all trays from the stack, closing the tray UI completely.
 
@@ -197,8 +242,96 @@ function HomeScreen() {
           })
         }
       />
+    </View>
+  );
+}
+```
 
-      {/* Replace the top tray */}
+---
+
+## TypeScript Support
+
+The library provides comprehensive TypeScript support with generics for type-safe tray props.
+
+### Type Definitions
+
+The main type definitions you'll work with include:
+
+```tsx
+// Define your tray registry
+type TrayRegistry = Record<string, { component: React.ComponentType<any> }>;
+
+// Configuration for each tray stack
+type TrayStackConfig = {
+  enteringAnimation?: AnimationBuilder;
+  exitingAnimation?: AnimationBuilder;
+  backdropStyles?: ViewStyle;
+  trayStyles?: ViewStyle;
+  adjustForKeyboard?: boolean;
+  dismissOnBackdropPress?: boolean;
+  // ... other configuration options
+};
+```
+
+### Generic Type Parameters
+
+The `useTrays` hook accepts a generic type parameter for full type safety:
+
+```tsx
+// Define your tray props type map
+type TrayProps = {
+  TrayKey1: { prop1: string; prop2: number };
+  TrayKey2: { data: Array<any>; onSubmit: () => void };
+  // ... other tray props
+};
+
+// Use the type-safe hook
+const { push, pop, replace } = useTrays<TrayProps>('stackId');
+```
+
+### Type-Safe API Usage
+
+With proper type definitions, you get full type checking for tray operations:
+
+```tsx
+// Define enum for tray keys (optional but recommended)
+enum TrayEnum {
+  Details = 'DetailsTray',
+  Form = 'FormTray',
+}
+
+// Define props for each tray
+type DetailsTrayProps = {
+  id: string;
+  title: string;
+};
+
+type FormTrayProps = {
+  onSubmit: (data: any) => void;
+  initialValues?: Record<string, any>;
+};
+
+// Create a type map for all tray props
+type TrayProps = {
+  [TrayEnum.Details]: DetailsTrayProps;
+  [TrayEnum.Form]: FormTrayProps;
+};
+
+// In your component
+function MyComponent() {
+  const { push } = useTrays<TrayProps>('main');
+
+  // TypeScript will enforce correct props for each tray
+  const openDetailsTray = () => {
+    push(TrayEnum.Details, {
+      id: '123',
+      title: 'Product Details',
+      // TypeScript error: Property 'invalid' does not exist on type 'DetailsTrayProps'
+      // invalid: true,
+    });
+  };
+}
+```
       <Button
         title="Replace with Form"
         onPress={() =>

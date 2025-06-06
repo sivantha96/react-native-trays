@@ -121,6 +121,8 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       style={[
         styles.tray,
         {
+          backgroundColor: config.customTheming ? undefined : '#fff',
+          shadowColor: config.customTheming ? undefined : '#000',
           left: insets.left + horizontalSpacing,
           right: insets.right + horizontalSpacing,
         },
@@ -148,8 +150,6 @@ const styles = StyleSheet.create({
   tray: {
     position: 'absolute',
     borderRadius: 30,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.25,
     shadowRadius: 40,

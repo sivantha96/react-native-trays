@@ -5,7 +5,7 @@
  * Used throughout the tray provider and related components.
  */
 import type { ComponentType } from 'react';
-import type { ViewStyle } from 'react-native';
+import type { ViewProps, ViewStyle } from 'react-native';
 import type {
   BaseAnimationBuilder,
   EntryExitAnimationFunction,
@@ -54,6 +54,32 @@ export type EntryOrExitLayoutType =
   | EntryExitAnimationFunction
   | ReanimatedKeyframe;
 
+interface BlueViewProps extends ViewProps {
+  blurReductionFactor?: number;
+  tint?:
+    | 'light'
+    | 'dark'
+    | 'default'
+    | 'extraLight'
+    | 'regular'
+    | 'prominent'
+    | 'systemUltraThinMaterial'
+    | 'systemThinMaterial'
+    | 'systemMaterial'
+    | 'systemThickMaterial'
+    | 'systemChromeMaterial'
+    | 'systemUltraThinMaterialLight'
+    | 'systemThinMaterialLight'
+    | 'systemMaterialLight'
+    | 'systemThickMaterialLight'
+    | 'systemChromeMaterialLight'
+    | 'systemUltraThinMaterialDark'
+    | 'systemThinMaterialDark'
+    | 'systemMaterialDark'
+    | 'systemThickMaterialDark'
+    | 'systemChromeMaterialDark';
+  intensity?: number;
+}
 /**
  * TrayStackConfig
  *
@@ -68,7 +94,10 @@ export interface TrayStackConfig {
   horizontalSpacing?: number;
   dismissOnBackdropPress?: boolean;
   disableBackgroundBlur?: boolean;
+  blurViewProps?: BlueViewProps;
   stickToTop?: boolean;
+  customTheming?: boolean;
+  ignoreSafeArea?: boolean;
 }
 
 /**

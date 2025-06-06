@@ -45,7 +45,11 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
           trayProps={activeTray.props}
           config={config}
           TrayComponent={TrayComponent}
-          insets={insets}
+          insets={
+            config.ignoreSafeArea
+              ? { top: 0, bottom: 0, left: 0, right: 0 }
+              : insets
+          }
         />
       )}
     </>

@@ -147,7 +147,10 @@ export const TrayProvider = <T extends TrayRegistry>({
             }}
           >
             {BlurView && !stackConfigs[stackId]?.disableBackgroundBlur ? (
-              <BlurView style={styles.blurView} />
+              <BlurView
+                style={styles.blurView}
+                {...(stackConfigs[stackId]?.blurViewProps ?? {})}
+              />
             ) : (
               <View style={styles.blurViewPlaceholder} />
             )}

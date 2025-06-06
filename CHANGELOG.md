@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/sivantha96/react-native-trays/compare/v0.3.5...v0.4.0) (2025-06-06)
+
+
+### Features
+
+* add customization options for blur view, theming and safe area handling ([4647a77](https://github.com/sivantha96/react-native-trays/commit/4647a77cdf3634bde9ec2e2f754462e993803be3))
+
 ## [0.3.5](https://github.com/sivantha96/react-native-trays/compare/v0.3.4...v0.3.5) (2025-04-30)
 
 ### Bug Fixes

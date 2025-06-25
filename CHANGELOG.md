@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/sivantha96/react-native-trays/compare/v0.5.0...v0.5.1) (2025-06-25)
+
+
+### Bug Fixes
+
+* fix dismissOnBackdropPress getting ignored issue ([4a4c0b9](https://github.com/sivantha96/react-native-trays/commit/4a4c0b93bfc3616b55802273ecd08e8107d66e98))
+
 # [0.5.0](https://github.com/sivantha96/react-native-trays/compare/v0.4.0...v0.5.0) (2025-06-25)
 
 

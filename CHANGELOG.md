@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/sivantha96/react-native-trays/compare/v0.4.0...v0.5.0) (2025-06-25)
+
+
+### Features
+
+* add replaceTray and replaceTrayById methods to swap trays with new ones ([29a54db](https://github.com/sivantha96/react-native-trays/commit/29a54dbbf98ad9e7dd2b1f6915c5d54a821a2f10))
+
 # [0.4.0](https://github.com/sivantha96/react-native-trays/compare/v0.3.5...v0.4.0) (2025-06-06)
 
 

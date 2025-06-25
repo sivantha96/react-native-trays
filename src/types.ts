@@ -112,10 +112,22 @@ export interface TrayContextType<T extends Record<string, unknown>> {
   push: <K extends keyof T>(trayKey: K, props: T[K]) => void;
   /** Pop the top-most tray from the stack. */
   pop: () => void;
-  /** Replace a tray by its unique ID. */
+  /** Replace the props of a tray by its unique ID */
   replaceById: <K extends keyof T>(trayId: string, props: T[K]) => void;
-  /** Replace the top-most tray by tray key. */
+  /** Replace the props of the top-most tray by tray key. */
   replace: <K extends keyof T>(trayKey: string, props: T[K]) => void;
+  /** Replace the tray of a tray by its unique ID with new tray key and props. */
+  replaceTrayById: <K extends keyof T>(
+    trayId: string,
+    newTrayKey: string,
+    props: T[K]
+  ) => void;
+  /** Replace the tray of the top-most tray by tray key with new tray key and props. */
+  replaceTray: <K extends keyof T>(
+    trayKey: string,
+    newTrayKey: string,
+    props: T[K]
+  ) => void;
   /** Dismiss a tray by tray key. */
   dismiss: (trayKey: string) => void;
   /** Dismiss a tray by its unique ID. */

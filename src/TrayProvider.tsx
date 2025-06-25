@@ -114,6 +114,18 @@ export const TrayProvider = <T extends TrayRegistry>({
         modifyStack(stackId, (stack) =>
           stack.map((t) => (t.tray === trayKey ? { ...t, props } : t))
         ),
+      replaceTrayById: (trayId, newTrayKey, props) =>
+        modifyStack(stackId, (stack) =>
+          stack.map((t) =>
+            t.id === trayId ? { ...t, tray: newTrayKey, props } : t
+          )
+        ),
+      replaceTray: (trayKey, newTrayKey, props) =>
+        modifyStack(stackId, (stack) =>
+          stack.map((t) =>
+            t.tray === trayKey ? { ...t, tray: newTrayKey, props } : t
+          )
+        ),
       dismissById: (trayId) =>
         modifyStack(stackId, (stack) => stack.filter((t) => t.id !== trayId)),
       dismiss: (trayKey) =>

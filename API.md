@@ -393,6 +393,16 @@ interface TrayContextType<T extends Record<string, unknown>> {
   pop: () => void;
   replaceById: <K extends keyof T>(trayId: string, props: T[K]) => void;
   replace: <K extends keyof T>(trayKey: string, props: T[K]) => void;
+  replaceTrayById: <K extends keyof T>(
+    trayId: string,
+    newTrayKey: string,
+    props: T[K]
+  ) => void;
+  replaceTray: <K extends keyof T>(
+    trayKey: string,
+    newTrayKey: string,
+    props: T[K]
+  ) => void;
   dismiss: (trayKey: string) => void;
   dismissById: (trayId: string) => void;
   dismissAll: () => void;

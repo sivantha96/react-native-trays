@@ -155,7 +155,9 @@ export const TrayProvider = <T extends TrayRegistry>({
             entering={FadeIn}
             exiting={FadeOut}
             onTouchEnd={() => {
-              contextValue(stackId).pop();
+              if (stackConfigs[stackId]?.dismissOnBackdropPress) {
+                contextValue(stackId).pop();
+              }
             }}
           >
             {BlurView && !stackConfigs[stackId]?.disableBackgroundBlur ? (

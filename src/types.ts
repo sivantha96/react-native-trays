@@ -114,7 +114,7 @@ export interface TrayContextType<T extends Record<string, unknown>> {
   pop: () => void;
   /** Replace the props of a tray by its unique ID */
   replaceById: <K extends keyof T>(trayId: string, props: T[K]) => void;
-  /** Replace the props of the top-most tray by tray key. */
+  /** Replace the props of the top-most tray by tray key. push to the stack if the stack is empty */
   replace: <K extends keyof T>(trayKey: string, props: T[K]) => void;
   /** Replace the tray of a tray by its unique ID with new tray key and props. */
   replaceTrayById: <K extends keyof T>(

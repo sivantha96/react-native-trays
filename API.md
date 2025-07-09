@@ -137,7 +137,7 @@ An object containing the following methods:
 - `push(trayKey, props)` — Push a new tray onto the stack.
 - `pop()` — Pop the top-most tray from the stack.
 - `replaceById(trayId, props)` — Replace a tray by its unique ID.
-- `replace(trayKey, props)` — Replace the top-most tray by tray key.
+- `replace(trayKey, props)` — Replace the top-most tray by tray key. push to the stack if the stack is empty.
 - `dismiss(trayKey)` — Dismiss a tray by tray key.
 - `dismissById(trayId)` — Dismiss a tray by its unique ID.
 - `dismissAll()` — Dismiss all trays in the stack.
@@ -179,6 +179,7 @@ Replaces a specific tray instance by its unique ID.
 ##### `replace(trayKey, props)`
 
 Replaces all instances of trays with the given key in the stack.
+push to the stack if the stack is empty.
 
 - **Parameters**:
   - `trayKey: string` - The key of the tray type to replace

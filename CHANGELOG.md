@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/sivantha96/react-native-trays/compare/v0.6.0...v0.6.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* append new tray instead of replacing when tray key doesn't exist in stack ([7efc24c](https://github.com/sivantha96/react-native-trays/commit/7efc24cf7d3a6f63db2cd66659bc71e1ba57208f))
+
 # [0.6.0](https://github.com/sivantha96/react-native-trays/compare/v0.5.1...v0.6.0) (2025-07-09)
 
 

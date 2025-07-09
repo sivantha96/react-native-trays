@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/sivantha96/react-native-trays/compare/v0.5.1...v0.6.0) (2025-07-09)
+
+
+### Features
+
+* add auto-push behavior to replace() when tray stack is empty ([7cc9ecf](https://github.com/sivantha96/react-native-trays/commit/7cc9ecf1fdd88580209a541e6012058641397e93))
+
 ## [0.5.1](https://github.com/sivantha96/react-native-trays/compare/v0.5.0...v0.5.1) (2025-06-25)
 
 

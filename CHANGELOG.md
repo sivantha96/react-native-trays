@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/sivantha96/react-native-trays/compare/v0.6.1...v0.6.2) (2025-07-10)
+
+
+### Bug Fixes
+
+* add backdropPointerEvents prop to customize backdrop touch handling ([07fe75b](https://github.com/sivantha96/react-native-trays/commit/07fe75b26a3022ac01679a2ebd6df80b91eb0499))
+
 ## [0.6.1](https://github.com/sivantha96/react-native-trays/compare/v0.6.0...v0.6.1) (2025-07-09)
 
 

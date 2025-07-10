@@ -166,6 +166,7 @@ export const TrayProvider = <T extends TrayRegistry>({
                 contextValue(stackId).pop();
               }
             }}
+            pointerEvents={stackConfigs[stackId]?.backdropPointerEvents}
           >
             {BlurView && !stackConfigs[stackId]?.disableBackgroundBlur ? (
               <BlurView

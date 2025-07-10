@@ -87,6 +87,7 @@ interface BlueViewProps extends ViewProps {
  */
 export interface TrayStackConfig {
   backdropStyles?: ViewStyle;
+  backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
   trayStyles?: ViewStyle;
   adjustForKeyboard?: boolean;
   enteringAnimation?: EntryOrExitLayoutType;

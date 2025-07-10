@@ -267,6 +267,7 @@ type TrayStackConfig = {
   enteringAnimation?: AnimationBuilder;
   exitingAnimation?: AnimationBuilder;
   backdropStyles?: ViewStyle;
+  backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
   trayStyles?: ViewStyle;
   adjustForKeyboard?: boolean;
   dismissOnBackdropPress?: boolean;
@@ -418,6 +419,7 @@ Per-stack configuration options.
 interface TrayStackConfig {
   // Styling
   backdropStyles?: ViewStyle;
+  backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
   trayStyles?: ViewStyle;
   horizontalSpacing?: number; // Horizontal padding from screen edges
 

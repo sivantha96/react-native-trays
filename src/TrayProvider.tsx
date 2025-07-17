@@ -7,7 +7,12 @@
 import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
+let BlurView: React.ComponentType<any> | null = null;
+try {
+  BlurView = require('expo-blur').BlurView;
+} catch (e) {
+  BlurView = null;
+}
 import uuid from 'react-native-uuid';
 import { TrayContext } from './context';
 import type { TrayRegistry, TrayStackConfig, TrayContextValue } from './types';

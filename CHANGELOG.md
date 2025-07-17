@@ -1,3 +1,15 @@
+# [0.7.0](https://github.com/sivantha96/react-native-trays/compare/v0.6.2...v0.7.0) (2025-07-17)
+
+
+### Bug Fixes
+
+* make expo-blur dependency optional with dynamic import ([c13408b](https://github.com/sivantha96/react-native-trays/commit/c13408b9fa380ff390c071d4c534f16931909aea))
+
+
+### Features
+
+* add layout animation controls ([18f5199](https://github.com/sivantha96/react-native-trays/commit/18f5199930283cfc0d4fb80a630bd5f561d43d5e))
+
 ## [0.6.2](https://github.com/sivantha96/react-native-trays/compare/v0.6.1...v0.6.2) (2025-07-10)
 
 

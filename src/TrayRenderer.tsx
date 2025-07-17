@@ -4,13 +4,14 @@
  * Renders a single tray component with animation and keyboard adjustment support.
  * Handles tray position, animation, and keyboard-aware behavior for tray UI.
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   View,
   Platform,
   Keyboard,
   type KeyboardEvent,
   StyleSheet,
+  type DimensionValue,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -24,7 +25,8 @@ import Animated, {
   FadeOutDown,
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
-import type { EdgeInsets } from 'react-native-safe-area-context';
+import { type EdgeInsets } from 'react-native-safe-area-context';
+import { DEVICE_HEIGHT } from './constants';
 
 /**
  * Props for TrayRenderer component.
@@ -57,14 +59,28 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
 }) => {
   const trayBottom = useSharedValue(insets.bottom);
 
+  const maxAllowedHeight = useMemo(
+    () =>
+      Math.round(DEVICE_HEIGHT) -
+      (Math.round(insets.top) + Math.round(insets.bottom)),
+    [insets.bottom, insets.top]
+  );
+
+  const maxHeight = useSharedValue<DimensionValue>(maxAllowedHeight);
+
   useEffect(() => {
     if (!config.adjustForKeyboard) return;
 
     const handleKeyboardShow = (e: KeyboardEvent) => {
-      trayBottom.value = withTiming(e.endCoordinates.height + 20, {
-        duration: Platform.OS === 'ios' ? 60 : 250,
-        easing: Easing.out(Easing.ease),
-      });
+      trayBottom.value = withTiming(
+        Platform.OS === 'android' && config.clipMaxHeightToSafeArea
+          ? 0
+          : e.endCoordinates.height,
+        {
+          duration: Platform.OS === 'ios' ? 60 : 250,
+          easing: Easing.out(Easing.ease),
+        }
+      );
     };
 
     const handleKeyboardHide = () => {
@@ -88,7 +104,54 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       showSub.remove();
       hideSub.remove();
     };
-  }, [config.adjustForKeyboard, insets.bottom, trayBottom]);
+  }, [
+    config.adjustForKeyboard,
+    config.clipMaxHeightToSafeArea,
+    insets.bottom,
+    trayBottom,
+  ]);
+
+  useEffect(() => {
+    if (!config.clipMaxHeightToSafeArea) return;
+
+    const handleKeyboardShow = (e: KeyboardEvent) => {
+      maxHeight.value = withTiming(
+        maxAllowedHeight -
+          (config.adjustForKeyboard ? e.endCoordinates.height : 0),
+        {
+          duration: Platform.OS === 'ios' ? 60 : 250,
+          easing: Easing.out(Easing.ease),
+        }
+      );
+    };
+
+    const handleKeyboardHide = () => {
+      maxHeight.value = withTiming(maxAllowedHeight, {
+        duration: Platform.OS === 'ios' ? 90 : 200,
+        easing: Easing.out(Easing.ease),
+      });
+    };
+
+    const showSub =
+      Platform.OS === 'ios'
+        ? Keyboard.addListener('keyboardWillShow', handleKeyboardShow)
+        : Keyboard.addListener('keyboardDidShow', handleKeyboardShow);
+
+    const hideSub =
+      Platform.OS === 'ios'
+        ? Keyboard.addListener('keyboardWillHide', handleKeyboardHide)
+        : Keyboard.addListener('keyboardDidHide', handleKeyboardHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [
+    config.adjustForKeyboard,
+    config.clipMaxHeightToSafeArea,
+    maxAllowedHeight,
+    maxHeight,
+  ]);
 
   const trayAnimatedStyle = useAnimatedStyle(
     () =>
@@ -110,6 +173,13 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     [config.trayStyles]
   );
 
+  const trayAnimatedHeight = useAnimatedStyle(
+    () => ({
+      maxHeight: maxHeight.value,
+    }),
+    [maxHeight]
+  );
+
   const {
     enteringAnimation = SlideInDown,
     exitingAnimation = SlideOutDown,
@@ -128,6 +198,7 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
         },
         config.trayStyles,
         trayAnimatedStyle,
+        config.clipMaxHeightToSafeArea ? trayAnimatedHeight : {},
       ]}
       layout={
         config.disableLayoutAnimation

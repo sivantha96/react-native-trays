@@ -118,6 +118,14 @@ export interface TrayStackConfig {
     | BaseAnimationBuilder
     | typeof BaseAnimationBuilder
     | LayoutAnimationFunction;
+
+  /**
+   * Lets you clip the maximum height of the tray to be inside the safe area.
+   * Make sure to use a ScrollView or a relevant component inside the tray
+   * to make the items scrollable when the height is clipped
+   * @default false
+   */
+  clipMaxHeightToSafeArea?: boolean;
 }
 
 /**

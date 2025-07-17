@@ -129,7 +129,12 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
         config.trayStyles,
         trayAnimatedStyle,
       ]}
-      layout={LinearTransition.easing(Easing.out(Easing.ease)).duration(150)}
+      layout={
+        config.disableLayoutAnimation
+          ? undefined
+          : (config.customLayoutAnimation ??
+            LinearTransition.easing(Easing.out(Easing.ease)).duration(150))
+      }
       entering={enteringAnimation}
       exiting={exitingAnimation}
     >

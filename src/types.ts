@@ -9,6 +9,7 @@ import type { ViewProps, ViewStyle } from 'react-native';
 import type {
   BaseAnimationBuilder,
   EntryExitAnimationFunction,
+  LayoutAnimationFunction,
 } from 'react-native-reanimated';
 import type { ReanimatedKeyframe } from 'react-native-reanimated/lib/typescript/layoutReanimation/animationBuilder/Keyframe';
 
@@ -99,6 +100,24 @@ export interface TrayStackConfig {
   stickToTop?: boolean;
   customTheming?: boolean;
   ignoreSafeArea?: boolean;
+  /**
+   * Disables the layout animation when components are added to or removed from the view hierarchy.
+   * @default false
+   */
+  disableLayoutAnimation?: boolean;
+  /**
+   * Lets you animate the layout changes when components are added to or removed
+   * from the view hierarchy.
+   *
+   * You can use the predefined layout transitions (eg. `LinearTransition`,
+   * `FadingTransition`) or create your own ones.
+   *
+   * @see https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/layout-transitions
+   */
+  customLayoutAnimation?:
+    | BaseAnimationBuilder
+    | typeof BaseAnimationBuilder
+    | LayoutAnimationFunction;
 }
 
 /**

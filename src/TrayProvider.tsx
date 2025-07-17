@@ -1,23 +1,23 @@
-/**
- * TrayProvider.tsx
- *
- * Provides the TrayProvider React context component for managing tray stacks and rendering trays in a React Native app.
- * This file contains the core logic for tray registration, stack management, and context propagation.
- */
-import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { FadeIn, FadeOut } from 'react-native-reanimated';
-let BlurView: React.ComponentType<any> | null = null;
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import uuid from 'react-native-uuid';
+
+import {
+  type TrayContextValue,
+  type TrayProviderProps,
+  type TrayRegistry,
+  type TrayStackConfig,
+} from './types';
+import { TrayStackRenderer } from './TrayStackRenderer';
+import { TrayContext } from './context';
+
+let BlurView;
 try {
   BlurView = require('expo-blur').BlurView;
 } catch (e) {
   BlurView = null;
 }
-import Animated from 'react-native-reanimated';
-import uuid from 'react-native-uuid';
-import { TrayContext } from './context';
-import type { TrayRegistry, TrayStackConfig, TrayContextValue } from './types';
-import { TrayStackRenderer } from './TrayStackRenderer';
 
 const defaultStackConfig: TrayStackConfig = {
   backdropStyles: {},
@@ -27,22 +27,27 @@ const defaultStackConfig: TrayStackConfig = {
   dismissOnBackdropPress: true,
 };
 
-export interface TrayProviderProps<T extends TrayRegistry> {
-  trays: T;
-  children: ReactNode;
-  stackConfigs?: Record<string, TrayStackConfig>;
-}
+const callbackMap: Record<
+  string,
+  {
+    onDismiss?: (event: {
+      stackId: string;
+      trayId?: string;
+      trayKey?: string;
+    }) => void;
+    onDismissAll?: (event: { stackId: string }) => void;
+    onBackdropPress?: (event: { stackId: string }) => void;
+  }
+> = {};
 
-/**
- * TrayProvider: Manages tray stacks, context, and rendering.
- *
- * @template T - The tray registry type.
- * @param trays - An object mapping tray keys to their components.
- * @param children - React children to render inside the provider.
- * @param stackConfigs - Optional per-stack configuration overrides.
- *
- * Provides context to manage multiple, optionally-configurable tray stacks and their lifecycle.
- */
+const executeCallback = (
+  callbackName: 'onDismiss' | 'onDismissAll' | 'onBackdropPress',
+  stackId: string,
+  event: { stackId: string; trayId?: string; trayKey?: string }
+) => {
+  callbackMap[stackId]?.[callbackName]?.(event);
+};
+
 export const TrayProvider = <T extends TrayRegistry>({
   trays,
   children,
@@ -94,6 +99,8 @@ export const TrayProvider = <T extends TrayRegistry>({
 
   const push = useCallback(
     (stackId: string, trayKey: string, props: unknown) => {
+      // onPushCallbacks.current[stackId]?.(id);
+      // onChangeCallbacks.current[stackId]?.(newStack.map((item) => item.id));
       modifyStack(stackId, (stack) => [
         ...stack,
         { id: uuid.v4().toString(), tray: trayKey, stackId, props },
@@ -105,7 +112,10 @@ export const TrayProvider = <T extends TrayRegistry>({
   const contextValue: TrayContextValue = useCallback(
     (stackId) => ({
       push: (trayKey, props) => push(stackId, trayKey, props),
-      pop: () => modifyStack(stackId, (stack) => stack.slice(0, -1)),
+      pop: () => {
+        executeCallback('onDismiss', stackId, { stackId });
+        return modifyStack(stackId, (stack) => stack.slice(0, -1));
+      },
       replaceById: (trayId, props) =>
         modifyStack(stackId, (stack) =>
           stack.map((t) => (t.id === trayId ? { ...t, props } : t))
@@ -133,19 +143,49 @@ export const TrayProvider = <T extends TrayRegistry>({
             t.tray === trayKey ? { ...t, tray: newTrayKey, props } : t
           )
         ),
-      dismissById: (trayId) =>
-        modifyStack(stackId, (stack) => stack.filter((t) => t.id !== trayId)),
-      dismiss: (trayKey) =>
-        modifyStack(stackId, (stack) =>
+      dismissById: (trayId) => {
+        executeCallback('onDismiss', stackId, { stackId, trayId });
+        return modifyStack(stackId, (stack) =>
+          stack.filter((t) => t.id !== trayId)
+        );
+      },
+      dismiss: (trayKey) => {
+        executeCallback('onDismiss', stackId, { stackId, trayKey });
+        return modifyStack(stackId, (stack) =>
           stack.filter((t) => t.tray !== trayKey)
-        ),
-      dismissAll: () =>
-        setStackMap((prev) => {
+        );
+      },
+      dismissAll: () => {
+        executeCallback('onDismissAll', stackId, { stackId });
+        return setStackMap((prev) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { [stackId]: _, ...rest } = prev;
           return rest;
-        }),
+        });
+      },
+      onDismiss: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onDismiss = callback;
+        } else {
+          callbackMap[stackId] = { onDismiss: callback };
+        }
+      },
+      onDismissAll: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onDismissAll = callback;
+        } else {
+          callbackMap[stackId] = { onDismissAll: callback };
+        }
+      },
+      onBackdropPress: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onBackdropPress = callback;
+        } else {
+          callbackMap[stackId] = { onBackdropPress: callback };
+        }
+      },
     }),
+
     [push, modifyStack]
   );
 
@@ -162,6 +202,7 @@ export const TrayProvider = <T extends TrayRegistry>({
             entering={FadeIn}
             exiting={FadeOut}
             onTouchEnd={() => {
+              callbackMap[stackId]?.onBackdropPress?.({ stackId });
               if (stackConfigs[stackId]?.dismissOnBackdropPress) {
                 contextValue(stackId).pop();
               }
@@ -181,6 +222,7 @@ export const TrayProvider = <T extends TrayRegistry>({
             stack={stack}
             config={stackConfigs[stackId] || defaultStackConfig}
             trays={trays}
+            onDismiss={() => contextValue(stackId).pop()}
           />
         </React.Fragment>
       ))}

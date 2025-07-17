@@ -11,6 +11,7 @@ import type {
   EntryExitAnimationFunction,
 } from 'react-native-reanimated';
 import type { ReanimatedKeyframe } from 'react-native-reanimated/lib/typescript/layoutReanimation/animationBuilder/Keyframe';
+import { type ReactNode } from 'react';
 
 /**
  * TrayRegistry
@@ -41,6 +42,18 @@ export type TrayContextValue = (
  */
 export interface TrayProps {
   [key: string]: unknown;
+}
+
+export interface StackTray {
+  id: string;
+  tray: string;
+  props: unknown;
+  stackId: string;
+}
+
+export interface TrayStack {
+  id: string;
+  stack: StackTray[];
 }
 
 /**
@@ -85,6 +98,14 @@ interface BlueViewProps extends ViewProps {
  *
  * Configuration options for a tray stack, allowing customization of styles, animations, and behavior.
  */
+
+export interface TrayProviderProps<T extends TrayRegistry> {
+  children: ReactNode;
+  trays: T;
+  stackConfigs?: Record<string, TrayStackConfig>;
+  defaultStackConfig?: TrayStackConfig;
+}
+
 export interface TrayStackConfig {
   backdropStyles?: ViewStyle;
   backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
@@ -96,6 +117,7 @@ export interface TrayStackConfig {
   dismissOnBackdropPress?: boolean;
   disableBackgroundBlur?: boolean;
   blurViewProps?: BlueViewProps;
+  enableSwipeToClose?: boolean;
   stickToTop?: boolean;
   customTheming?: boolean;
   ignoreSafeArea?: boolean;
@@ -135,4 +157,19 @@ export interface TrayContextType<T extends Record<string, unknown>> {
   dismissById: (trayId: string) => void;
   /** Dismiss all trays in the stack. */
   dismissAll: () => void;
+
+  /** Register a callback for when a tray is dismissed. */
+  onDismiss: (
+    callback: (event: {
+      stackId: string;
+      trayId?: string;
+      trayKey?: string;
+    }) => void
+  ) => void;
+
+  /** Register a callback for when all trays are dismissed. */
+  onDismissAll: (callback: (event: { stackId: string }) => void) => void;
+
+  /** Register a callback for when the backdrop is pressed. */
+  onBackdropPress: (callback: (event: { stackId: string }) => void) => void;
 }

@@ -4,14 +4,8 @@
  * Renders the active tray in a given stack, handling safe area insets and dynamic tray resolution.
  */
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { TrayRegistry, TrayStackConfig } from './types';
+import type { TrayRegistry, TrayStackConfig, StackTray } from './types';
 import { TrayRenderer } from './TrayRenderer';
-
-interface StackTray {
-  id: string;
-  tray: string;
-  props: unknown;
-}
 
 /**
  * TrayStackRenderer
@@ -27,10 +21,12 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
   stack,
   config,
   trays,
+  onDismiss,
 }: {
   stack: StackTray[];
   config: TrayStackConfig;
   trays: T;
+  onDismiss: (trayId: string) => void;
 }) => {
   const insets = useSafeAreaInsets();
   const activeTray = stack[stack.length - 1];
@@ -45,6 +41,7 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
           trayProps={activeTray.props}
           config={config}
           TrayComponent={TrayComponent}
+          onDismiss={() => onDismiss(activeTray.id)}
           insets={
             config.ignoreSafeArea
               ? { top: 0, bottom: 0, left: 0, right: 0 }

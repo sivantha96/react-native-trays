@@ -12,7 +12,14 @@ export const EditWalletTray: React.FC<EditWalletTrayProps> = ({}) => {
   const [name, setName] = useState('Luke');
   const [icon] = useState('Icon');
 
-  const { pop } = useTrays<TrayProps>('family');
+  const { pop, onDismiss, onBackdropPress } = useTrays<TrayProps>('family');
+
+  onDismiss((e) => {
+    console.log(`A tray on ${e.stackId} was dismissed`, e);
+  });
+  onBackdropPress((e) => {
+    console.log(`Backdrop was pressed on ${e.stackId}`, e);
+  });
 
   const handleOnClose = () => {
     pop();

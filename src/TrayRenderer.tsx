@@ -1,16 +1,15 @@
-/**
- * TrayRenderer.tsx
- *
- * Renders a single tray component with animation and keyboard adjustment support.
- * Handles tray position, animation, and keyboard-aware behavior for tray UI.
- */
-import React, { useEffect } from 'react';
 import {
-  View,
+  Gesture,
+  GestureDetector,
+  Directions,
+} from 'react-native-gesture-handler';
+import React, { useEffect, useMemo } from 'react';
+import {
   Platform,
   Keyboard,
   type KeyboardEvent,
   StyleSheet,
+  View,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -22,6 +21,7 @@ import Animated, {
   SlideOutDown,
   FadeInDown,
   FadeOutDown,
+  runOnJS,
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
 import type { EdgeInsets } from 'react-native-safe-area-context';
@@ -40,6 +40,7 @@ interface TrayRendererProps {
   config: TrayStackConfig;
   TrayComponent: React.ComponentType<Record<string, unknown>>;
   insets: EdgeInsets;
+  onDismiss: () => void;
 }
 
 /**
@@ -54,7 +55,10 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
   config,
   TrayComponent,
   insets,
+  onDismiss,
 }) => {
+  const translateY = useSharedValue(0);
+  const trayHeight = useSharedValue(0);
   const trayBottom = useSharedValue(insets.bottom);
 
   useEffect(() => {
@@ -90,25 +94,33 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     };
   }, [config.adjustForKeyboard, insets.bottom, trayBottom]);
 
-  const trayAnimatedStyle = useAnimatedStyle(
-    () =>
-      config.stickToTop
-        ? {
-            top:
-              insets.top +
-              (typeof config.trayStyles?.top === 'number'
-                ? config.trayStyles?.top
-                : 0),
-          }
-        : {
-            bottom:
-              trayBottom.value +
-              (typeof config.trayStyles?.bottom === 'number'
-                ? config.trayStyles?.bottom
-                : 0),
-          },
-    [config.trayStyles]
+  const dynamicTrayStyle = useMemo(
+    () => ({
+      backgroundColor: config.customTheming ? undefined : '#fff',
+      shadowColor: config.customTheming ? undefined : '#000',
+    }),
+    [config.customTheming]
   );
+
+  const trayAnimatedStyle = useAnimatedStyle(() => {
+    const style: any = {
+      transform: [{ translateY: translateY.value }],
+    };
+    if (config.stickToTop) {
+      style.top =
+        insets.top +
+        (typeof config.trayStyles?.top === 'number'
+          ? config.trayStyles?.top
+          : 0);
+    } else {
+      style.bottom =
+        trayBottom.value +
+        (typeof config.trayStyles?.bottom === 'number'
+          ? config.trayStyles?.bottom
+          : 0);
+    }
+    return style;
+  }, [config.stickToTop, config.trayStyles, insets.top, trayBottom.value]);
 
   const {
     enteringAnimation = SlideInDown,
@@ -116,16 +128,24 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     horizontalSpacing = 20,
   } = config;
 
+  const gesture = Gesture.Fling()
+    .direction(config.stickToTop ? Directions.UP : Directions.DOWN)
+    .onEnd((_event, success) => {
+      if (success) {
+        runOnJS(onDismiss)();
+      }
+    });
+
   return (
     <Animated.View
+      key={trayKey}
       style={[
         styles.tray,
         {
-          backgroundColor: config.customTheming ? undefined : '#fff',
-          shadowColor: config.customTheming ? undefined : '#000',
           left: insets.left + horizontalSpacing,
           right: insets.right + horizontalSpacing,
         },
+        dynamicTrayStyle,
         config.trayStyles,
         trayAnimatedStyle,
       ]}
@@ -133,14 +153,34 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       entering={enteringAnimation}
       exiting={exitingAnimation}
     >
-      <View style={styles.content}>
-        <Animated.View
-          key={trayKey}
-          entering={FadeInDown.duration(180)}
-          exiting={FadeOutDown.duration(120)}
-        >
-          <TrayComponent {...(trayProps ?? {})} />
-        </Animated.View>
+      <View
+        style={styles.content}
+        onLayout={(e) => {
+          trayHeight.value = e.nativeEvent.layout.height;
+        }}
+      >
+        {config.enableSwipeToClose ? (
+          <GestureDetector
+            gesture={config.enableSwipeToClose ? gesture : Gesture.Pan()}
+          >
+            <Animated.View
+              collapsable={false}
+              key={trayKey}
+              entering={FadeInDown.duration(180)}
+              exiting={FadeOutDown.duration(120)}
+            >
+              <TrayComponent {...(trayProps ?? {})} />
+            </Animated.View>
+          </GestureDetector>
+        ) : (
+          <Animated.View
+            key={trayKey}
+            entering={FadeInDown.duration(180)}
+            exiting={FadeOutDown.duration(120)}
+          >
+            <TrayComponent {...(trayProps ?? {})} />
+          </Animated.View>
+        )}
       </View>
     </Animated.View>
   );

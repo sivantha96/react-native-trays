@@ -11,6 +11,7 @@ describe('TrayRenderer', () => {
         config={{}}
         TrayComponent={DummyTray as any}
         insets={{ bottom: 0, left: 0, right: 0, top: 0 }}
+        onDismiss={() => {}}
       />
     );
     expect(getByText('Hello Tray')).toBeTruthy();
@@ -26,6 +27,7 @@ describe('TrayRenderer', () => {
         config={{ adjustForKeyboard: true }}
         TrayComponent={DummyTray as any}
         insets={{ bottom: 0, left: 0, right: 0, top: 0 }}
+        onDismiss={() => {}}
       />
     );
     // No assertion needed; test passes if no error
@@ -42,6 +44,7 @@ describe('TrayRenderer', () => {
         }}
         TrayComponent={DummyTray as any}
         insets={{ bottom: 10, left: 5, right: 5, top: 0 }}
+        onDismiss={() => {}}
       />
     );
     // No assertion needed; test passes if no error

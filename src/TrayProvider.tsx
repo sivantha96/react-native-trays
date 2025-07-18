@@ -4,19 +4,25 @@
  * Provides the TrayProvider React context component for managing tray stacks and rendering trays in a React Native app.
  * This file contains the core logic for tray registration, stack management, and context propagation.
  */
-import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-let BlurView: React.ComponentType<any> | null = null;
+import crypto from 'crypto';
+import {
+  type TrayContextValue,
+  type TrayProviderProps,
+  type TrayRegistry,
+  type TrayStackConfig,
+} from './types';
+import { TrayStackRenderer } from './TrayStackRenderer';
+import { TrayContext } from './context';
+
+let BlurView;
 try {
   BlurView = require('expo-blur').BlurView;
 } catch (e) {
   BlurView = null;
 }
-import uuid from 'react-native-uuid';
-import { TrayContext } from './context';
-import type { TrayRegistry, TrayStackConfig, TrayContextValue } from './types';
-import { TrayStackRenderer } from './TrayStackRenderer';
 
 const defaultStackConfig: TrayStackConfig = {
   backdropStyles: {},
@@ -25,12 +31,6 @@ const defaultStackConfig: TrayStackConfig = {
   horizontalSpacing: 20,
   dismissOnBackdropPress: true,
 };
-
-export interface TrayProviderProps<T extends TrayRegistry> {
-  trays: T;
-  children: ReactNode;
-  stackConfigs?: Record<string, TrayStackConfig>;
-}
 
 /**
  * TrayProvider: Manages tray stacks, context, and rendering.
@@ -95,7 +95,7 @@ export const TrayProvider = <T extends TrayRegistry>({
     (stackId: string, trayKey: string, props: unknown) => {
       modifyStack(stackId, (stack) => [
         ...stack,
-        { id: uuid.v4().toString(), tray: trayKey, stackId, props },
+        { id: crypto.randomUUID(), tray: trayKey, stackId, props },
       ]);
     },
     [modifyStack]
@@ -117,7 +117,7 @@ export const TrayProvider = <T extends TrayRegistry>({
           }
           return [
             ...stack,
-            { id: uuid.v4().toString(), tray: trayKey, stackId, props },
+            { id: crypto.randomUUID(), tray: trayKey, stackId, props },
           ];
         }),
       replaceTrayById: (trayId, newTrayKey, props) =>
@@ -180,6 +180,7 @@ export const TrayProvider = <T extends TrayRegistry>({
             stack={stack}
             config={stackConfigs[stackId] || defaultStackConfig}
             trays={trays}
+            onDismiss={() => contextValue(stackId).pop()}
           />
         </React.Fragment>
       ))}

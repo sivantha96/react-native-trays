@@ -46,5 +46,6 @@ export const stackConfigs: Record<string, TrayStackConfig> = {
     enteringAnimation: SlideInDown,
     exitingAnimation: SlideOutDown,
     adjustForKeyboard: true,
+    enableSwipeToClose: true,
   },
 };

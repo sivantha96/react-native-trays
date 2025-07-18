@@ -6,6 +6,7 @@ import { trays } from './src/config/trayRegistry';
 import { stackConfigs } from './src/config/stackConfigs';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { useFonts } from 'expo-font';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 /**
  * Main App component that sets up the TrayProvider with all configurations
@@ -18,9 +19,11 @@ export default function App() {
   });
   return (
     <SafeAreaProvider>
-      <TrayProvider trays={trays} stackConfigs={stackConfigs}>
-        <HomeScreen />
-      </TrayProvider>
+      <GestureHandlerRootView>
+        <TrayProvider trays={trays} stackConfigs={stackConfigs}>
+          <HomeScreen />
+        </TrayProvider>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

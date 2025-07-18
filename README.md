@@ -16,34 +16,24 @@ A production-grade, fully open-source tray system for React Native with a React 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://github.com/sivantha96/react-native-trays/actions/workflows/release.yml/badge.svg)](https://github.com/sivantha96/react-native-trays/actions/workflows/release.yml)
 
-## Table of Contents
-
-- [Features](#-features)
-- [Installation](#-installation)
-- [Required Setup](#️-required-setup-reanimated--safe-area)
-- [Quick Start](#-quick-start)
-- [TypeScript Support](#-typescript-support)
-- [API Reference](#-api-reference)
-- [Advanced Usage](#-advanced-usage)
-- [Live Demo](#-live-demo)
-- [License](#license)
-
 ---
 
----
+## 🤔 Why react-native-trays?
+
+While there are many modal libraries for React Native, `react-native-trays` is designed to feel like a native extension of your app's navigation. It provides a powerful, yet familiar, `useTrays` hook that mimics the `useNavigation` hook from React Navigation. This allows you to manage contextual UI "trays"—like bottom sheets, alerts, or pop-ups—as part of a declarative and predictable stack.
+
+It's built from the ground up with **TypeScript**, **Reanimated 2**, and a focus on **performance and developer experience**.
 
 ## ✨ Features
 
-- **React Navigation-like API**: Familiar hooks-based API with push, pop, replace, and dismiss operations
-- **Multiple tray stacks**: Create independent tray flows with separate configurations
-- **Customizable animations**: Built-in Reanimated animations (slide, fade) with support for custom animations
-- **Keyboard awareness**: Trays automatically adjust position when keyboard appears
-- **Safe area support**: Proper handling of device notches and system UI
-- **Backdrop customization**: Blur effects, opacity, and dismiss behavior
-- **Full TypeScript support**: Complete type safety with generics for tray props
-- **ID and key-based operations**: Target specific trays or tray types
-- **Expo and bare workflow compatible**: Works in all React Native environments
-- **Production-ready**: Built with performance and reliability in mind
+- **React Navigation-like API**: A familiar `useTrays` hook with `push`, `pop`, `replace`, and `dismiss` methods.
+- **Multiple Tray Stacks**: Manage independent tray flows (e.g., `main` vs. `modal`) with separate configurations.
+- **Highly Customizable**: Configure animations, backdrops, keyboard handling, safe area, and more, per-stack or per-tray.
+- **Directional Swipe-to-Close**: Intuitive swipe gestures to dismiss trays (swipe down for bottom trays, swipe up for top trays).
+- **Keyboard Awareness**: Trays automatically adjust their position when the keyboard appears, ensuring inputs are always visible.
+- **Full TypeScript Support**: Complete type safety with generics for tray props, ensuring robust and error-free code.
+- **Expo & Bare Workflow Compatible**: Works seamlessly in any React Native environment.
+- **Production-Ready**: Built with performance and reliability as top priorities.
 
 ---
 
@@ -63,9 +53,9 @@ The library requires the following peer dependencies:
 
 ```sh
 # Install required peer dependencies
-npm install react-native-reanimated react-native-safe-area-context react-native-uuid
+npm install react-native-reanimated react-native-safe-area-context react-native-gesture-handler
 
-# Optional: For backdrop blur effect in Expo
+# Optional: For backdrop blur effect
 npm install expo-blur
 ```
 
@@ -75,25 +65,24 @@ npm install expo-blur
 
 Before using the library, you must properly set up the required dependencies:
 
-1. **React Native Reanimated** - Follow the [official setup guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation/)
+1.  **React Native Reanimated** - Follow the [official setup guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation/).
+2.  **React Native Safe Area Context** - Follow the [official setup guide](https://github.com/th3rdwave/react-native-safe-area-context#installation).
+3.  **React Native Gesture Handler** - Follow the [official setup guide](https://docs.swmansion.com/react-native-gesture-handler/docs/installation).
 
-   - Make sure to add the Babel plugin to your `babel.config.js`
-   - For Expo, ensure you have the correct version compatible with your Expo SDK
-
-2. **React Native Safe Area Context** - Follow the [official setup guide](https://github.com/th3rdwave/react-native-safe-area-context#installation)
-   - Wrap your app with `SafeAreaProvider` before using `TrayProvider`
-
-If these dependencies are not correctly set up, you may encounter errors like `Native part of Reanimated doesn't seem to be initialized (Worklets)`.
+Make sure to wrap your app's entry point with the `gestureHandlerRootHOC` and `SafeAreaProvider`, and add the Reanimated Babel plugin to your `babel.config.js`.
 
 ---
 
 ## 🚀 Quick Start
 
+Here's how to get started in just a few steps:
+
 ```tsx
 import { TrayProvider, useTrays } from 'react-native-trays';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View, Text, Button } from 'react-native';
 
-// Define your tray components
+// 1. Define your tray components
 const trays = {
   MyTray: {
     component: ({ message }) => (
@@ -105,7 +94,7 @@ const trays = {
   },
 };
 
-// Wrap your app with providers
+// 2. Wrap your app with providers
 export default function App() {
   return (
     <SafeAreaProvider>
@@ -116,9 +105,9 @@ export default function App() {
   );
 }
 
-// Use trays in your components
+// 3. Use the useTrays hook to open and close trays
 function HomeScreen() {
-  const { push, pop } = useTrays('main');
+  const { push } = useTrays('main');
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -175,18 +164,18 @@ type TrayProps = {
 
 ### Using Type-Safe Hooks
 
-Pass your type map to the `useTrays` hook for complete type safety:
+Get full type safety for your tray props by creating a type map and passing it to the `useTrays` hook.
 
 ```tsx
 import { useTrays } from 'react-native-trays';
 
+// Pass the type map to the useTrays hook
 function MyComponent() {
-  // Type-safe hook with your TrayProps type map
   const { push, pop, replace } = useTrays<TrayProps>('main');
 
-  // TypeScript will enforce correct props for each tray
+  // TypeScript will now enforce correct props for each tray
   const openDetailsTray = () => {
-    push(TrayEnum.Details, {
+    push('Details', {
       id: '123',
       title: 'Product Details',
       // TypeScript error: Property 'invalid' does not exist on type 'DetailsTrayProps'
@@ -210,11 +199,15 @@ function MyComponent() {
 
 ## 📚 API Reference
 
-See [API.md](./API.md) for a complete reference of all types, hooks, and provider props.
+For a complete reference of all types, hooks, and provider props, see **[API.md](./API.md)**.
+
+For a detailed breakdown of all the available configuration options, see the **[TrayStackConfig documentation](./API.md#traystackconfig)**.
 
 ---
 
-## 🤗 Advanced Usage
+## 🥑 Advanced Usage
+
+`react-native-trays` is designed to be highly customizable. You can configure animations, gestures, keyboard handling, and more on a per-stack basis.
 
 ### Multiple Tray Stacks
 
@@ -292,6 +285,8 @@ Trays automatically adjust when the keyboard appears:
   <App />
 </TrayProvider>
 ```
+
+See **[TrayStackConfig](./API.md#traystackconfig)** for the full list of over 20 configuration options.
 
 ---
 

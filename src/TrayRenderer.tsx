@@ -11,6 +11,7 @@ import {
   Keyboard,
   type KeyboardEvent,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -25,6 +26,18 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
 import type { EdgeInsets } from 'react-native-safe-area-context';
+
+/**
+ * Type alias for margin values used in tray style calculations.
+ * Supports numeric values (pixels), string values (with units), or undefined.
+ */
+type MarginValue = number | string | undefined;
+
+/**
+ * Device screen height used for tray positioning and max height calculations.
+ * Retrieved once at module load to avoid repeated Dimensions.get() calls.
+ */
+const { height: DEVICE_HEIGHT } = Dimensions.get('window');
 
 /**
  * Props for TrayRenderer component.
@@ -116,13 +129,39 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     horizontalSpacing = 20,
   } = config;
 
+  // Helper function to parse margin values
+  const parseMarginValue = (value?: number | string | null): number => {
+    if (typeof value === 'number') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      return parseFloat(value) || 0;
+    }
+    return 0;
+  };
+
+  // Max height calculation
+  const maxHeight =
+    DEVICE_HEIGHT -
+    insets.bottom -
+    insets.top -
+    (config.trayStyles?.marginVertical !== undefined
+      ? parseMarginValue(config.trayStyles.marginVertical as MarginValue) * 2
+      : parseMarginValue(
+          (config.trayStyles?.marginBottom ?? 0) as MarginValue
+        ) +
+        parseMarginValue((config.trayStyles?.marginTop ?? 0) as MarginValue));
+
   return (
     <Animated.View
       style={[
         styles.tray,
         {
-          backgroundColor: config.customTheming ? undefined : '#fff',
-          shadowColor: config.customTheming ? undefined : '#000',
+          ...(!config.customTheming && {
+            backgroundColor: '#fff',
+            shadowColor: '#000',
+          }),
+          maxHeight,
           left: insets.left + horizontalSpacing,
           right: insets.right + horizontalSpacing,
         },

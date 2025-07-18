@@ -1,3 +1,11 @@
+# [0.8.0](https://github.com/sivantha96/react-native-trays/compare/v0.7.0...v0.8.0) (2025-07-18)
+
+
+### Features
+
+* add swipe-to-close gesture support for trays with direction based on position ([355575a](https://github.com/sivantha96/react-native-trays/commit/355575ab89940724f655510653dbc5b524cedd7a))
+* implement platform-aware unique ID generation for tray items ([12b8b0c](https://github.com/sivantha96/react-native-trays/commit/12b8b0c55eeeb40a31d90fc36fe8c48a5b694ab0))
+
 # [0.7.0](https://github.com/sivantha96/react-native-trays/compare/v0.6.2...v0.7.0) (2025-07-17)
 
 

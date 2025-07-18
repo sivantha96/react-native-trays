@@ -1,6 +1,6 @@
 {
   "name": "react-native-trays",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Production-grade, Family inspired, React Native Tray System library",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",

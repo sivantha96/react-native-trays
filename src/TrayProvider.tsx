@@ -7,7 +7,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import crypto from 'crypto';
 import {
   type TrayContextValue,
   type TrayProviderProps,
@@ -16,6 +15,7 @@ import {
 } from './types';
 import { TrayStackRenderer } from './TrayStackRenderer';
 import { TrayContext } from './context';
+import { generateUniqueId } from './utils';
 
 let BlurView;
 try {
@@ -95,7 +95,7 @@ export const TrayProvider = <T extends TrayRegistry>({
     (stackId: string, trayKey: string, props: unknown) => {
       modifyStack(stackId, (stack) => [
         ...stack,
-        { id: crypto.randomUUID(), tray: trayKey, stackId, props },
+        { id: generateUniqueId(), tray: trayKey, stackId, props },
       ]);
     },
     [modifyStack]
@@ -117,7 +117,7 @@ export const TrayProvider = <T extends TrayRegistry>({
           }
           return [
             ...stack,
-            { id: crypto.randomUUID(), tray: trayKey, stackId, props },
+            { id: generateUniqueId(), tray: trayKey, stackId, props },
           ];
         }),
       replaceTrayById: (trayId, newTrayKey, props) =>

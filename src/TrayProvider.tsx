@@ -1,8 +1,12 @@
+/**
+ * TrayProvider.tsx
+ *
+ * Provides the TrayProvider React context component for managing tray stacks and rendering trays in a React Native app.
+ * This file contains the core logic for tray registration, stack management, and context propagation.
+ */
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import uuid from 'react-native-uuid';
-
 import {
   type TrayContextValue,
   type TrayProviderProps,
@@ -11,6 +15,7 @@ import {
 } from './types';
 import { TrayStackRenderer } from './TrayStackRenderer';
 import { TrayContext } from './context';
+import { generateUniqueId } from './utils';
 
 let BlurView;
 try {
@@ -48,6 +53,16 @@ const executeCallback = (
   callbackMap[stackId]?.[callbackName]?.(event);
 };
 
+/**
+ * TrayProvider: Manages tray stacks, context, and rendering.
+ *
+ * @template T - The tray registry type.
+ * @param trays - An object mapping tray keys to their components.
+ * @param children - React children to render inside the provider.
+ * @param stackConfigs - Optional per-stack configuration overrides.
+ *
+ * Provides context to manage multiple, optionally-configurable tray stacks and their lifecycle.
+ */
 export const TrayProvider = <T extends TrayRegistry>({
   trays,
   children,
@@ -103,7 +118,7 @@ export const TrayProvider = <T extends TrayRegistry>({
       // onChangeCallbacks.current[stackId]?.(newStack.map((item) => item.id));
       modifyStack(stackId, (stack) => [
         ...stack,
-        { id: uuid.v4().toString(), tray: trayKey, stackId, props },
+        { id: generateUniqueId(), tray: trayKey, stackId, props },
       ]);
     },
     [modifyStack]
@@ -128,7 +143,7 @@ export const TrayProvider = <T extends TrayRegistry>({
           }
           return [
             ...stack,
-            { id: uuid.v4().toString(), tray: trayKey, stackId, props },
+            { id: generateUniqueId(), tray: trayKey, stackId, props },
           ];
         }),
       replaceTrayById: (trayId, newTrayKey, props) =>

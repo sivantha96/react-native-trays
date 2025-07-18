@@ -1,3 +1,9 @@
+/**
+ * TrayRenderer.tsx
+ *
+ * Renders a single tray component with animation and keyboard adjustment support.
+ * Handles tray position, animation, and keyboard-aware behavior for tray UI.
+ */
 import {
   Gesture,
   GestureDetector,
@@ -149,7 +155,12 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
         config.trayStyles,
         trayAnimatedStyle,
       ]}
-      layout={LinearTransition.easing(Easing.out(Easing.ease)).duration(150)}
+      layout={
+        config.disableLayoutAnimation
+          ? undefined
+          : (config.customLayoutAnimation ??
+            LinearTransition.easing(Easing.out(Easing.ease)).duration(150))
+      }
       entering={enteringAnimation}
       exiting={exitingAnimation}
     >

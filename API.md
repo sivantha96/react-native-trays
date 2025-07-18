@@ -1,118 +1,64 @@
 # API Reference: react-native-trays
 
-This document describes the complete API for the `react-native-trays` library. For usage examples, see [README.md](./README.md) and [EXAMPLE.md](./EXAMPLE.md).
+This document provides a complete API reference for the `react-native-trays` library. For setup instructions and basic usage examples, please see the [README.md](./README.md).
 
 ## Table of Contents
 
 - [Components](#components)
-  - [TrayProvider](#trayprovider)
+  - [`TrayProvider`](#trayprovider)
 - [Hooks](#hooks)
-  - [useTrays](#usetrays)
-- [TypeScript Support](#typescript-support)
-  - [Type Definitions](#type-definitions)
-  - [Generic Type Parameters](#generic-type-parameters)
-  - [Type-Safe API Usage](#type-safe-api-usage)
+  - [`useTrays`](#usetrays)
 - [Configuration](#configuration)
-  - [TrayStackConfig](#traystackconfig)
-  - [TrayRegistry](#trayregistry)
+  - [`TrayStackConfig`](#traystackconfig)
+- [TypeScript Support](#typescript-support)
+  - [`TrayRegistry`](#trayregistry)
+  - [Type-Safe API Usage](#type-safe-api-usage)
+
+---
 
 ## Components
 
 ### `TrayProvider`
 
-The root component that provides tray stack context and renders trays. Wrap your app with this provider.
+The root component that enables the tray system. It should be placed at the top level of your application.
 
-### Props
+#### Props
 
-- `trays: TrayRegistry` — Registry mapping tray keys to their React components.
-- `children: ReactNode` — App children.
-- `stackConfigs?: Record<string, TrayStackConfig>` — Optional per-stack configuration overrides.
+- `trays: TrayRegistry` **(required)** - An object that maps string keys to your tray components. See [`TrayRegistry`](#trayregistry) for more details.
+- `children: ReactNode` **(required)** - Your application's child components.
+- `stackConfigs?: Record<string, TrayStackConfig>` - An object to provide specific configurations for different tray stacks.
+- `defaultStackConfig?: TrayStackConfig` - A default configuration that applies to all stacks unless overridden by `stackConfigs`.
 
-See [types.ts](./src/types.ts) for full type definitions.
-
-### Example
+#### Example
 
 ```tsx
-import { TrayProvider, useTrays } from 'react-native-trays';
-import { Button, Text } from 'react-native';
+import { TrayProvider } from 'react-native-trays';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { MyTrays } from './trays'; // Your tray definitions
 
-const trays = {
-  DemoTray: {
-    component: ({ text }: { text: string }) => <Text>{text}</Text>,
+// Define configurations for different stacks
+const stackConfigs = {
+  main: {
+    dismissOnBackdropPress: true,
+    backdropStyles: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
+  },
+  modal: {
+    dismissOnBackdropPress: false,
+    enteringAnimation: SlideInUp,
+    exitingAnimation: SlideOutDown,
   },
 };
 
 export default function App() {
   return (
-    <TrayProvider trays={trays}>
-      <HomeScreen />
-    </TrayProvider>
-  );
-}
-
-function HomeScreen() {
-  const traysApi = useTrays('main');
-  return (
-    <Button
-      title="Show Tray"
-      onPress={() => traysApi.push('DemoTray', { text: 'Hello from Tray!' })}
-    />
+    <SafeAreaProvider>
+      <TrayProvider trays={MyTrays} stackConfigs={stackConfigs}>
+        <YourAppContent />
+      </TrayProvider>
+    </SafeAreaProvider>
   );
 }
 ```
-
-ShortTray: {
-component: ({ title, message }) => (
-<View style={{ minHeight: 100, padding: 24 }}>
-<Text>{title}</Text>
-<Text>{message}</Text>
-</View>
-),
-},
-TallTray: {
-component: ({ items }) => (
-<View style={{ minHeight: 400, padding: 24 }}>
-<Text>Scrollable List</Text>
-<ScrollView>
-{items.map((item, index) => (
-<View key={index}>
-<Text>{item}</Text>
-</View>
-))}
-</ScrollView>
-</View>
-),
-},
-};
-
-// Configure different stack configurations
-const stackConfigs = {
-main: {
-backdropStyles: { backgroundColor: 'rgba(0,0,0,0.5)' },
-trayStyles: { backgroundColor: 'white', borderRadius: 16 },
-adjustForKeyboard: true,
-dismissOnBackdropPress: true,
-},
-secondary: {
-backdropStyles: { backgroundColor: 'rgba(0,0,0,0.3)' },
-enteringAnimation: SlideInUp,
-exitingAnimation: SlideOutDown,
-dismissOnBackdropPress: false,
-},
-};
-
-// App component with TrayProvider
-export default function App() {
-return (
-<SafeAreaProvider>
-<TrayProvider trays={trays} stackConfigs={stackConfigs}>
-<YourAppContent />
-</TrayProvider>
-</SafeAreaProvider>
-);
-}
-
-````
 
 ---
 
@@ -120,285 +66,121 @@ return (
 
 ### `useTrays`
 
-Hook to access tray stack manipulation functions for a specific stack. Throws if used outside of a `TrayProvider`.
+A hook that provides access to the tray manipulation API for a specific stack.
 
 ```tsx
-const { push, pop, replace, replaceById, dismiss, dismissById, dismissAll } = useTrays(stackId);
+const { push, pop, ... } = useTrays(stackId);
 ```
 
 #### Parameters
 
-- `stackId: string` — Identifier for the tray stack to manipulate.
+- `stackId: string` **(required)** - The unique identifier for the tray stack you want to control.
 
-#### Returns
+#### Return Value
 
-An object containing the following methods:
+Returns an object with the following functions:
 
-- `push(trayKey, props)` — Push a new tray onto the stack.
-- `pop()` — Pop the top-most tray from the stack.
-- `replaceById(trayId, props)` — Replace a tray by its unique ID.
-- `replace(trayKey, props)` — Replace the top-most tray by tray key. push to the stack if the stack is empty.
-- `dismiss(trayKey)` — Dismiss a tray by tray key.
-- `dismissById(trayId)` — Dismiss a tray by its unique ID.
-- `dismissAll()` — Dismiss all trays in the stack.
+| Method            | Description                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------- |
+| `push`            | Pushes a new tray onto the stack.                                                                       |
+| `pop`             | Removes the top-most tray from the stack.                                                               |
+| `replace`         | Replaces the props of the top-most tray matching a key. If none exists, it pushes a new tray.           |
+| `replaceById`     | Replaces the props of a specific tray instance identified by its unique ID.                             |
+| `replaceTray`     | Replaces the component and props of the top-most tray matching a key.                                   |
+| `replaceTrayById` | Replaces the component and props for a specific tray instance identified by its unique ID.              |
+| `dismiss`         | Dismisses all instances of a tray with the given key.                                                   |
+| `dismissById`     | Dismisses a specific tray instance by its unique ID.                                                    |
+| `dismissAll`      | Dismisses all trays in the stack, leaving it empty.                                                     |
 
-All methods are fully typed. For TypeScript support, see the [TypeScript Support](#typescript-support) section below.
+---
 
-#### Method Details
+## Configuration
 
-##### `push(trayKey, props)`
+### `TrayStackConfig`
 
-Pushes a new tray onto the stack.
+This interface allows you to customize the appearance and behavior of each tray stack.
 
-- **Parameters**:
-  - `trayKey: string` - The key of the tray to push (must be registered in the tray registry)
-  - `props: any` - Props to pass to the tray component
-- **Behavior**:
-  - If no trays are open: Opens a new tray
-  - If trays already exist: Transitions the currently visible tray to the new tray
-
-##### `pop()`
-
-Removes the most recently added tray from the stack.
-
-- **Behavior**:
-  - If only one tray is left: Closes the tray completely
-  - If multiple trays exist: Transitions back to the previous tray
-
-##### `replaceById(trayId, props)`
-
-Replaces a specific tray instance by its unique ID.
-
-- **Parameters**:
-  - `trayId: string` - The unique ID of the tray instance to replace
-  - `props: any` - New props to pass to the tray component
-- **Behavior**:
-  - More precise than `replace()` as it targets a single tray instance
-  - Preserves the stack structure while updating just one tray
-
-##### `replace(trayKey, props)`
-
-Replaces all instances of trays with the given key in the stack.
-push to the stack if the stack is empty.
-
-- **Parameters**:
-  - `trayKey: string` - The key of the tray type to replace
-  - `props: any` - New props to pass to the tray component(s)
-- **Behavior**:
-  - Updates all trays of a specific type with new props
-  - Maintains the stack order but updates the content
-
-##### `dismiss(trayKey)`
-
-Removes all trays with the given key from the stack.
-
-- **Parameters**:
-  - `trayKey: string` - The key of the tray type to dismiss
-- **Behavior**:
-  - If removing the last tray: Closes the tray UI completely
-  - If other trays remain: Shows the next tray in the stack
-
-##### `dismissById(trayId)`
-
-Removes a specific tray instance by its unique ID.
-
-- **Parameters**:
-  - `trayId: string` - The unique ID of the tray instance to dismiss
-- **Behavior**:
-  - More precise than `dismiss()` as it targets a single tray instance
-  - If removing the last tray: Closes the tray UI completely
-
-##### `dismissAll()`
-
-Removes all trays from the stack, closing the tray UI completely.
-
-### Example
-
-```tsx
-function HomeScreen() {
-  // Use multiple stacks
-  const mainTrays = useTrays('main'); // For general notifications
-  const secondaryTrays = useTrays('secondary'); // For modal-like overlays
-
-  return (
-    <View>
-      {/* Push a short tray to main stack */}
-      <Button
-        title="Show Notification"
-        onPress={() =>
-          mainTrays.push('ShortTray', {
-            title: 'Simple Notification',
-            message: 'This is a short tray with minimal content',
-          })
-        }
-      />
-
-      {/* Push an image tray to secondary stack */}
-      <Button
-        title="Show Image"
-        onPress={() =>
-          secondaryTrays.push('ImageTray', {
-            imageUrl: 'https://example.com/image.jpg',
-            caption: 'Beautiful landscape',
-          })
-        }
-      />
-    </View>
-  );
-}
-```
+| Property                  | Type                               | Default     | Description                                                                                               |
+| ------------------------- | ---------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| `backdropStyles`          | `ViewStyle`                        | `{}`        | Custom styles for the backdrop view.                                                                      |
+| `backdropPointerEvents`   | `'auto' \| 'none' \| ...`         | `'auto'`    | Controls if the backdrop can be the target of touch events.                                               |
+| `trayStyles`              | `ViewStyle`                        | `{}`        | Custom styles for the tray container.                                                                     |
+| `adjustForKeyboard`       | `boolean`                          | `true`      | If `true`, the tray adjusts its position to avoid the on-screen keyboard.                                 |
+| `enteringAnimation`       | `EntryOrExitLayoutType`            | `undefined` | Animation from `react-native-reanimated` for when a tray enters.                                          |
+| `exitingAnimation`        | `EntryOrExitLayoutType`            | `undefined` | Animation from `react-native-reanimated` for when a tray exits.                                           |
+| `horizontalSpacing`       | `number`                           | `20`        | Horizontal margin for the tray from the screen edges.                                                     |
+| `dismissOnBackdropPress`  | `boolean`                          | `true`      | If `true`, pressing the backdrop dismisses the top-most tray.                                             |
+| `disableBackgroundBlur`   | `boolean`                          | `false`     | If `true`, disables the `expo-blur` effect on the backdrop.                                               |
+| `blurViewProps`           | `BlurViewProps`                    | `undefined` | Props to customize the backdrop's blur effect.                                                            |
+| `enableSwipeToClose`      | `boolean`                          | `false`     | If `true`, the tray can be closed by swiping it down.                                                     |
+| `stickToTop`              | `boolean`                          | `false`     | If `true`, the tray aligns to the top of the screen instead of the bottom.                                |
+| `ignoreSafeArea`          | `boolean`                          | `false`     | If `true`, the tray ignores safe area insets and extends to the screen edges.                             |
+| `disableLayoutAnimation`  | `boolean`                          | `false`     | Disables the layout animation when trays are added or removed.                                            |
+| `customLayoutAnimation`   | `LayoutAnimation`                  | `undefined` | A custom `react-native-reanimated` layout animation for tray transitions.                                 |
 
 ---
 
 ## TypeScript Support
 
-The library provides comprehensive TypeScript support with generics for type-safe tray props.
+The library is written in TypeScript and provides strong type safety out of the box.
 
-### Type Definitions
+### `TrayRegistry`
 
-The main type definitions you'll work with include:
-
-```tsx
-// Define your tray registry
-type TrayRegistry = Record<string, { component: React.ComponentType<any> }>;
-
-// Configuration for each tray stack
-type TrayStackConfig = {
-  enteringAnimation?: AnimationBuilder;
-  exitingAnimation?: AnimationBuilder;
-  backdropStyles?: ViewStyle;
-  backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
-  trayStyles?: ViewStyle;
-  adjustForKeyboard?: boolean;
-  dismissOnBackdropPress?: boolean;
-  // ... other configuration options
-};
-```
-
-### Generic Type Parameters
-
-The `useTrays` hook accepts a generic type parameter for full type safety:
+To define your trays, create an object that maps string keys to tray component definitions.
 
 ```tsx
-// Define your tray props type map
-type TrayProps = {
-  TrayKey1: { prop1: string; prop2: number };
-  TrayKey2: { data: Array<any>; onSubmit: () => void };
-  // ... other tray props
+import { ComponentType } from 'react';
+
+// Define props for each tray
+export type MyTrayProps = {
+  InfoTray: { title: string; message: string };
+  ConfirmationTray: { onConfirm: () => void; onCancel: () => void };
 };
 
-// Use the type-safe hook
-const { push, pop, replace } = useTrays<TrayProps>('stackId');
+// Define the tray components
+const InfoTray: ComponentType<MyTrayProps['InfoTray']> = ({ title, message }) => { ... };
+const ConfirmationTray: ComponentType<MyTrayProps['ConfirmationTray']> = ({ onConfirm, onCancel }) => { ... };
+
+// Create the registry
+export const MyTrays = {
+  InfoTray: { component: InfoTray },
+  ConfirmationTray: { component: ConfirmationTray },
+};
 ```
 
 ### Type-Safe API Usage
 
-With proper type definitions, you get full type checking for tray operations:
+Pass your props type to the `useTrays` hook to get full type safety and autocompletion for tray operations.
 
 ```tsx
-// Define enum for tray keys (optional but recommended)
-enum TrayEnum {
-  Details = 'DetailsTray',
-  Form = 'FormTray',
-}
+import { useTrays } from 'react-native-trays';
+import { MyTrayProps } from './trays'; // Your props type definition
 
-// Define props for each tray
-type DetailsTrayProps = {
-  id: string;
-  title: string;
-};
-
-type FormTrayProps = {
-  onSubmit: (data: any) => void;
-  initialValues?: Record<string, any>;
-};
-
-// Create a type map for all tray props
-type TrayProps = {
-  [TrayEnum.Details]: DetailsTrayProps;
-  [TrayEnum.Form]: FormTrayProps;
-};
-
-// In your component
 function MyComponent() {
-  const { push } = useTrays<TrayProps>('main');
+  const { push } = useTrays<MyTrayProps>('main');
 
-  // TypeScript will enforce correct props for each tray
-  const openDetailsTray = () => {
-    push(TrayEnum.Details, {
-      id: '123',
-      title: 'Product Details',
-      // TypeScript error: Property 'invalid' does not exist on type 'DetailsTrayProps'
-      // invalid: true,
+  const showInfo = () => {
+    // TypeScript will ensure the props match the definition for 'InfoTray'
+    push('InfoTray', {
+      title: 'Hello',
+      message: 'This is a type-safe tray!',
     });
   };
-}
-```
-      <Button
-        title="Replace with Form"
-        onPress={() =>
-          secondaryTrays.replace('FormTray', {
-            onSubmit: (text) => {
-              console.log(`Submitted: ${text}`);
-              secondaryTrays.pop();
-            },
-          })
-        }
-      />
 
-      {/* Dismiss all trays */}
-      <Button
-        title="Dismiss All"
-        onPress={() => {
-          mainTrays.dismissAll();
-          secondaryTrays.dismissAll();
-        }}
-      />
-    </View>
+  const showConfirmation = () => {
+    push('ConfirmationTray', {
+      onConfirm: () => console.log('Confirmed!'),
+      onCancel: () => console.log('Cancelled.'),
+      // The following would cause a TypeScript error:
+      // invalidProp: true 
+    });
+  };
+
+  return (
+    // ... buttons to call showInfo and showConfirmation
   );
 }
-````
-
----
-
-## Types
-
-### `TrayRegistry`
-
-Registry of tray components that can be used in the application.
-
-```tsx
-interface TrayRegistry {
-  [key: string]: {
-    component: ComponentType<any>;
-  };
-}
 ```
-
-### `TrayProps`
-
-Props for tray components.
-
-```tsx
-interface TrayProps {
-  [key: string]: unknown;
-}
-```
-
-### `TrayContextType`
-
-Context API for tray stack.
-
-```tsx
-interface TrayContextType<T extends Record<string, unknown>> {
-  push: <K extends keyof T>(trayKey: K, props: T[K]) => void;
-  pop: () => void;
-  replaceById: <K extends keyof T>(trayId: string, props: T[K]) => void;
-  replace: <K extends keyof T>(trayKey: string, props: T[K]) => void;
-  replaceTrayById: <K extends keyof T>(
-    trayId: string,
-    newTrayKey: string,
-    props: T[K]
   ) => void;
   replaceTray: <K extends keyof T>(
     trayKey: string,

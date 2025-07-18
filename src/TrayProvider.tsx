@@ -32,6 +32,27 @@ const defaultStackConfig: TrayStackConfig = {
   dismissOnBackdropPress: true,
 };
 
+const callbackMap: Record<
+  string,
+  {
+    onDismiss?: (event: {
+      stackId: string;
+      trayId?: string;
+      trayKey?: string;
+    }) => void;
+    onDismissAll?: (event: { stackId: string }) => void;
+    onBackdropPress?: (event: { stackId: string }) => void;
+  }
+> = {};
+
+const executeCallback = (
+  callbackName: 'onDismiss' | 'onDismissAll' | 'onBackdropPress',
+  stackId: string,
+  event: { stackId: string; trayId?: string; trayKey?: string }
+) => {
+  callbackMap[stackId]?.[callbackName]?.(event);
+};
+
 /**
  * TrayProvider: Manages tray stacks, context, and rendering.
  *
@@ -104,7 +125,10 @@ export const TrayProvider = <T extends TrayRegistry>({
   const contextValue: TrayContextValue = useCallback(
     (stackId) => ({
       push: (trayKey, props) => push(stackId, trayKey, props),
-      pop: () => modifyStack(stackId, (stack) => stack.slice(0, -1)),
+      pop: () => {
+        executeCallback('onDismiss', stackId, { stackId });
+        return modifyStack(stackId, (stack) => stack.slice(0, -1));
+      },
       replaceById: (trayId, props) =>
         modifyStack(stackId, (stack) =>
           stack.map((t) => (t.id === trayId ? { ...t, props } : t))
@@ -132,19 +156,49 @@ export const TrayProvider = <T extends TrayRegistry>({
             t.tray === trayKey ? { ...t, tray: newTrayKey, props } : t
           )
         ),
-      dismissById: (trayId) =>
-        modifyStack(stackId, (stack) => stack.filter((t) => t.id !== trayId)),
-      dismiss: (trayKey) =>
-        modifyStack(stackId, (stack) =>
+      dismissById: (trayId) => {
+        executeCallback('onDismiss', stackId, { stackId, trayId });
+        return modifyStack(stackId, (stack) =>
+          stack.filter((t) => t.id !== trayId)
+        );
+      },
+      dismiss: (trayKey) => {
+        executeCallback('onDismiss', stackId, { stackId, trayKey });
+        return modifyStack(stackId, (stack) =>
           stack.filter((t) => t.tray !== trayKey)
-        ),
-      dismissAll: () =>
-        setStackMap((prev) => {
+        );
+      },
+      dismissAll: () => {
+        executeCallback('onDismissAll', stackId, { stackId });
+        return setStackMap((prev) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { [stackId]: _, ...rest } = prev;
           return rest;
-        }),
+        });
+      },
+      onDismiss: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onDismiss = callback;
+        } else {
+          callbackMap[stackId] = { onDismiss: callback };
+        }
+      },
+      onDismissAll: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onDismissAll = callback;
+        } else {
+          callbackMap[stackId] = { onDismissAll: callback };
+        }
+      },
+      onBackdropPress: (callback) => {
+        if (callbackMap[stackId]) {
+          callbackMap[stackId].onBackdropPress = callback;
+        } else {
+          callbackMap[stackId] = { onBackdropPress: callback };
+        }
+      },
     }),
+
     [push, modifyStack]
   );
 
@@ -161,6 +215,7 @@ export const TrayProvider = <T extends TrayRegistry>({
             entering={FadeIn}
             exiting={FadeOut}
             onTouchEnd={() => {
+              callbackMap[stackId]?.onBackdropPress?.({ stackId });
               if (stackConfigs[stackId]?.dismissOnBackdropPress) {
                 contextValue(stackId).pop();
               }

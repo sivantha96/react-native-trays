@@ -322,4 +322,31 @@ export interface TrayContextType<T extends Record<string, unknown>> {
    * @description Dismisses all trays from the stack, leaving it empty.
    */
   dismissAll: () => void;
+
+  /**
+   * @method onDismiss
+   * @description Register a callback for when a tray is dismissed.
+   * @param {function} callback - The callback function to be invoked when a tray is dismissed.
+   */
+  onDismiss: (
+    callback: (event: {
+      stackId: string;
+      trayId?: string;
+      trayKey?: string;
+    }) => void
+  ) => void;
+
+  /**
+   * @method onDismissAll
+   * @description Register a callback for when all trays are dismissed.
+   * @param {function} callback - The callback function to be invoked when all trays are dismissed.
+   */
+  onDismissAll: (callback: (event: { stackId: string }) => void) => void;
+
+  /**
+   * @method onBackdropPress
+   * @description Register a callback for when the backdrop is pressed.
+   * @param {function} callback - The callback function to be invoked when the backdrop is pressed.
+   */
+  onBackdropPress: (callback: (event: { stackId: string }) => void) => void;
 }

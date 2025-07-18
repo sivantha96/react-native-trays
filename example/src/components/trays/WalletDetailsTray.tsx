@@ -8,7 +8,8 @@ import { TrayEnum, type TrayProps } from '../../config/trayRegistry';
 export interface WalletDetailsTrayProps {}
 
 export const WalletDetailsTray: React.FC<WalletDetailsTrayProps> = ({}) => {
-  const { push, pop } = useTrays<TrayProps>('family');
+  const { push, pop, onDismiss, onBackdropPress } =
+    useTrays<TrayProps>('family');
   const handleOnPressEditWallet = () => {
     push(TrayEnum.EditWallet, {});
   };
@@ -20,6 +21,13 @@ export const WalletDetailsTray: React.FC<WalletDetailsTrayProps> = ({}) => {
   const handleOnClose = () => {
     pop();
   };
+
+  onDismiss((e) => {
+    console.log(`A tray on ${e.stackId} was dismissed`, e);
+  });
+  onBackdropPress((e) => {
+    console.log(`Backdrop was pressed on ${e.stackId}`, e);
+  });
 
   return (
     <View style={styles.container}>

@@ -114,8 +114,6 @@ export const TrayProvider = <T extends TrayRegistry>({
 
   const push = useCallback(
     (stackId: string, trayKey: string, props: unknown) => {
-      // onPushCallbacks.current[stackId]?.(id);
-      // onChangeCallbacks.current[stackId]?.(newStack.map((item) => item.id));
       modifyStack(stackId, (stack) => [
         ...stack,
         { id: generateUniqueId(), tray: trayKey, stackId, props },

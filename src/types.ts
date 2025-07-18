@@ -45,18 +45,6 @@ export interface TrayProps {
   [key: string]: unknown;
 }
 
-export interface StackTray {
-  id: string;
-  tray: string;
-  props: unknown;
-  stackId: string;
-}
-
-export interface TrayStack {
-  id: string;
-  stack: StackTray[];
-}
-
 /**
  * @interface StackTray
  * @description Represents a single tray instance within a tray stack.

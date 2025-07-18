@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/sivantha96/react-native-trays/compare/v0.8.0...v0.9.0) (2025-07-18)
+
+
+### Features
+
+* add swipe-to-close gesture and tray lifecycle callbacks ([77b94f3](https://github.com/sivantha96/react-native-trays/commit/77b94f30a3baee2f9877385ae57fd7f9f6ff52dc))
+
 # [0.8.0](https://github.com/sivantha96/react-native-trays/compare/v0.7.0...v0.8.0) (2025-07-18)
 
 

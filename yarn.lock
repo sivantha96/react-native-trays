@@ -13727,7 +13727,6 @@ __metadata:
     react-native-gesture-handler: ">=2.0.0"
     react-native-reanimated: ">=3.0.0"
     react-native-safe-area-context: ">=4.0.0"
-    react-native-uuid: ">=2.0.0"
   peerDependenciesMeta:
     expo-blur:
       optional: true

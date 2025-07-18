@@ -12,6 +12,7 @@ import {
   type KeyboardEvent,
   StyleSheet,
   Dimensions,
+  type DimensionValue,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -26,12 +27,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
 import type { EdgeInsets } from 'react-native-safe-area-context';
-
-/**
- * Type alias for margin values used in tray style calculations.
- * Supports numeric values (pixels), string values (with units), or undefined.
- */
-type MarginValue = number | string | undefined;
 
 /**
  * Device screen height used for tray positioning and max height calculations.
@@ -130,13 +125,14 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
   } = config;
 
   // Helper function to parse margin values
-  const parseMarginValue = (value?: number | string | null): number => {
+  const parseMarginValue = (value?: DimensionValue): number => {
     if (typeof value === 'number') {
       return value;
     }
     if (typeof value === 'string') {
       return parseFloat(value) || 0;
     }
+    // Handle AnimatedNode or other non-primitive values by returning 0
     return 0;
   };
 
@@ -146,11 +142,9 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
     insets.bottom -
     insets.top -
     (config.trayStyles?.marginVertical !== undefined
-      ? parseMarginValue(config.trayStyles.marginVertical as MarginValue) * 2
-      : parseMarginValue(
-          (config.trayStyles?.marginBottom ?? 0) as MarginValue
-        ) +
-        parseMarginValue((config.trayStyles?.marginTop ?? 0) as MarginValue));
+      ? parseMarginValue(config.trayStyles.marginVertical) * 2
+      : parseMarginValue(config.trayStyles?.marginBottom) +
+        parseMarginValue(config.trayStyles?.marginTop));
 
   return (
     <Animated.View

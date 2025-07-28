@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/sivantha96/react-native-trays/compare/v0.9.0...v0.10.0) (2025-07-28)
+
+
+### Features
+
+* add keyboard-aware tray height and max height clipping ([c90b252](https://github.com/sivantha96/react-native-trays/commit/c90b25277160b2e51e8fdde6f8a7c0e6bc05c41f))
+
 # [0.9.0](https://github.com/sivantha96/react-native-trays/compare/v0.8.0...v0.9.0) (2025-07-18)
 
 

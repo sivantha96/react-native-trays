@@ -38,7 +38,6 @@ export const calculateKeyboardAdjustments = (
   const { adjustForKeyboard, clipMaxHeightToSafeArea } = behavior;
   const isAndroid = Platform.OS === 'android';
 
-  // Define adjustment strategies
   const strategies = {
     noAdjustment: {
       bottom: isAndroid ? -keyboardHeight : insetsBottom,

@@ -20,3 +20,62 @@ export const generateUniqueId = (): string => {
 
   return `id-${platform}-${timestamp}-${randomPart1}-${randomPart2}-${sessionCounter}`;
 };
+
+type KeyboardBehavior = {
+  adjustForKeyboard: boolean;
+  clipMaxHeightToSafeArea: boolean;
+};
+
+/**
+ * Calculate keyboard adjustments based on configuration
+ */
+export const calculateKeyboardAdjustments = (
+  keyboardHeight: number,
+  behavior: KeyboardBehavior,
+  maxAllowedHeight: number,
+  insetsBottom: number
+) => {
+  const { adjustForKeyboard, clipMaxHeightToSafeArea } = behavior;
+  const isAndroid = Platform.OS === 'android';
+
+  const strategies = {
+    noAdjustment: {
+      bottom: isAndroid ? -keyboardHeight : insetsBottom,
+      maxHeight: maxAllowedHeight,
+    },
+    adjustOnly: {
+      bottom: isAndroid ? 0 : keyboardHeight,
+      maxHeight: maxAllowedHeight,
+    },
+    clipOnly: {
+      bottom: isAndroid ? -keyboardHeight : insetsBottom,
+      maxHeight: maxAllowedHeight,
+    },
+    adjustAndClip: {
+      bottom: isAndroid ? 0 : keyboardHeight,
+      maxHeight: maxAllowedHeight - keyboardHeight + insetsBottom,
+    },
+    hide: {
+      bottom: insetsBottom,
+      maxHeight: maxAllowedHeight,
+    },
+  };
+
+  if (!adjustForKeyboard && !clipMaxHeightToSafeArea) {
+    return strategies.noAdjustment;
+  }
+
+  if (adjustForKeyboard && !clipMaxHeightToSafeArea) {
+    return strategies.adjustOnly;
+  }
+
+  if (!adjustForKeyboard && clipMaxHeightToSafeArea) {
+    return strategies.clipOnly;
+  }
+
+  if (adjustForKeyboard && clipMaxHeightToSafeArea) {
+    return strategies.adjustAndClip;
+  }
+
+  return strategies.hide;
+};

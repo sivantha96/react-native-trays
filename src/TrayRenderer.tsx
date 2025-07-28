@@ -16,6 +16,7 @@ import {
   type KeyboardEvent,
   StyleSheet,
   View,
+  type DimensionValue,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -31,6 +32,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { TrayStackConfig } from './types';
 import type { EdgeInsets } from 'react-native-safe-area-context';
+import { DEVICE_HEIGHT } from './constants';
+import { calculateKeyboardAdjustments } from './utils';
 
 /**
  * Props for TrayRenderer component.
@@ -66,39 +69,81 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
   const translateY = useSharedValue(0);
   const trayHeight = useSharedValue(0);
   const trayBottom = useSharedValue(insets.bottom);
+  const isIOS = Platform.OS === 'ios';
+
+  const maxAllowedHeight = useMemo(
+    () =>
+      Math.round(DEVICE_HEIGHT) -
+      (Math.round(insets.top) + Math.round(insets.bottom)),
+    [insets.bottom, insets.top]
+  );
+
+  const maxHeight = useSharedValue<DimensionValue>(maxAllowedHeight);
+
+  const keyboardBehavior = useMemo(
+    () => ({
+      adjustForKeyboard: config.adjustForKeyboard ?? false,
+      clipMaxHeightToSafeArea: config.clipMaxHeightToSafeArea ?? false,
+    }),
+
+    [config.adjustForKeyboard, config.clipMaxHeightToSafeArea]
+  );
 
   useEffect(() => {
-    if (!config.adjustForKeyboard) return;
-
     const handleKeyboardShow = (e: KeyboardEvent) => {
-      trayBottom.value = withTiming(e.endCoordinates.height + 20, {
-        duration: Platform.OS === 'ios' ? 60 : 250,
+      const keyboardHeight = e.endCoordinates.height;
+
+      const adjustments = calculateKeyboardAdjustments(
+        keyboardHeight,
+        keyboardBehavior,
+        maxAllowedHeight,
+        insets.bottom
+      );
+
+      trayBottom.value = withTiming(adjustments.bottom, {
+        duration: isIOS ? 60 : 250,
+        easing: Easing.out(Easing.ease),
+      });
+
+      maxHeight.value = withTiming(adjustments.maxHeight, {
+        duration: isIOS ? 60 : 10,
         easing: Easing.out(Easing.ease),
       });
     };
 
     const handleKeyboardHide = () => {
       trayBottom.value = withTiming(insets.bottom, {
-        duration: Platform.OS === 'ios' ? 90 : 200,
+        duration: isIOS ? 90 : 200,
+        easing: Easing.out(Easing.ease),
+      });
+      maxHeight.value = withTiming(maxAllowedHeight, {
+        duration: isIOS ? 90 : 0,
         easing: Easing.out(Easing.ease),
       });
     };
 
-    const showSub =
-      Platform.OS === 'ios'
-        ? Keyboard.addListener('keyboardWillShow', handleKeyboardShow)
-        : Keyboard.addListener('keyboardDidShow', handleKeyboardShow);
+    const showSub = isIOS
+      ? Keyboard.addListener('keyboardWillShow', handleKeyboardShow)
+      : Keyboard.addListener('keyboardDidShow', handleKeyboardShow);
 
-    const hideSub =
-      Platform.OS === 'ios'
-        ? Keyboard.addListener('keyboardWillHide', handleKeyboardHide)
-        : Keyboard.addListener('keyboardDidHide', handleKeyboardHide);
+    const hideSub = isIOS
+      ? Keyboard.addListener('keyboardWillHide', handleKeyboardHide)
+      : Keyboard.addListener('keyboardDidHide', handleKeyboardHide);
 
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, [config.adjustForKeyboard, insets.bottom, trayBottom]);
+  }, [
+    config.adjustForKeyboard,
+    config.clipMaxHeightToSafeArea,
+    insets.bottom,
+    isIOS,
+    keyboardBehavior,
+    maxAllowedHeight,
+    maxHeight,
+    trayBottom,
+  ]);
 
   const dynamicTrayStyle = useMemo(
     () => ({
@@ -142,6 +187,11 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       }
     });
 
+  const trayAnimatedHeight = useAnimatedStyle(() => {
+    'worklet';
+    return { maxHeight: maxHeight.value };
+  }, []);
+
   return (
     <Animated.View
       key={trayKey}
@@ -154,6 +204,7 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
         dynamicTrayStyle,
         config.trayStyles,
         trayAnimatedStyle,
+        config.clipMaxHeightToSafeArea ? trayAnimatedHeight : undefined,
       ]}
       layout={
         config.disableLayoutAnimation

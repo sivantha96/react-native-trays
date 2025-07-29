@@ -194,7 +194,6 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
 
   return (
     <Animated.View
-      key={trayKey}
       style={[
         styles.tray,
         {

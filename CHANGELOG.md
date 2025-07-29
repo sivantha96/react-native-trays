@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/sivantha96/react-native-trays/compare/v0.10.0...v0.10.1) (2025-07-29)
+
+
+### Bug Fixes
+
+* remove redundant key prop from Animated.View in TrayRenderer component ([e54f2eb](https://github.com/sivantha96/react-native-trays/commit/e54f2eb3036fadbe802f71f33263e0f9ee8dcfb2))
+
 # [0.10.0](https://github.com/sivantha96/react-native-trays/compare/v0.9.0...v0.10.0) (2025-07-28)
 
 

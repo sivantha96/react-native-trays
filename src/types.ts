@@ -357,4 +357,18 @@ export interface TrayContextType<T extends Record<string, unknown>> {
    * @param {function} callback - The callback function to be invoked when the backdrop is pressed.
    */
   onBackdropPress: (callback: (event: { stackId: string }) => void) => void;
+
+  /**
+   * @method activeTray
+   * @description Returns the tray key of the currently active (top-most) tray in the stack, or undefined if the stack is empty.
+   * @returns {string | undefined} The tray key of the active tray, or undefined.
+   */
+  activeTray: () => string | undefined;
+
+  /**
+   * @method getTrayStack
+   * @description Returns an array of tray keys representing the current stack, from bottom to top.
+   * @returns {string[] | undefined} An array of tray keys in the stack, or undefined if the stack is empty.
+   */
+  getTrayStack: () => string[] | undefined;
 }

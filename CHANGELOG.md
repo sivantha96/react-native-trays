@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/sivantha96/react-native-trays/compare/v0.10.1...v0.11.0) (2025-08-15)
+
+
+### Features
+
+* add methods to get active tray and tray stack from TrayProvider ([1d5eb37](https://github.com/sivantha96/react-native-trays/commit/1d5eb37321a0264cbfb7878dbc6b4fce2979c099))
+
 ## [0.10.1](https://github.com/sivantha96/react-native-trays/compare/v0.10.0...v0.10.1) (2025-07-29)
 
 

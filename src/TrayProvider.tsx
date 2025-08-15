@@ -197,9 +197,12 @@ export const TrayProvider = <T extends TrayRegistry>({
           callbackMap[stackId] = { onBackdropPress: callback };
         }
       },
+      getActiveTray: () =>
+        stackMap[stackId]?.[stackMap[stackId].length - 1]?.tray,
+      getTrayStack: () => stackMap[stackId],
     }),
 
-    [push, modifyStack]
+    [push, modifyStack, stackMap]
   );
 
   const activeStacks = useMemo(() => Object.entries(stackMap), [stackMap]);

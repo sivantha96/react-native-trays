@@ -197,8 +197,9 @@ export const TrayProvider = <T extends TrayRegistry>({
           callbackMap[stackId] = { onBackdropPress: callback };
         }
       },
-      activeTray: () => stackMap[stackId]?.[stackMap[stackId].length - 1]?.tray,
-      getTrayStack: () => stackMap[stackId]?.map((t) => t.tray),
+      getActiveTray: () =>
+        stackMap[stackId]?.[stackMap[stackId].length - 1]?.tray,
+      getTrayStack: () => stackMap[stackId],
     }),
 
     [push, modifyStack, stackMap]

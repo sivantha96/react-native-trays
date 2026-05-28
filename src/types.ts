@@ -29,13 +29,20 @@ export type EntryOrExitLayoutType =
 
 export interface TrayStackConfig {
   backdropStyles?: ViewStyle;
+  backdropPointerEvents?: 'auto' | 'box-none' | 'box-only' | 'none';
   trayStyles?: ViewStyle;
   adjustForKeyboard?: boolean;
+  clipMaxHeightToSafeArea?: boolean;
   enteringAnimation?: EntryOrExitLayoutType;
   exitingAnimation?: EntryOrExitLayoutType;
   horizontalSpacing?: number;
   dismissOnBackdropPress?: boolean;
   disableBackgroundBlur?: boolean;
+  enableSwipeToClose?: boolean;
+  stickToTop?: boolean;
+  customTheming?: boolean;
+  ignoreSafeArea?: boolean;
+  disableLayoutAnimation?: boolean;
 }
 
 export interface TrayContextType<T extends Record<string, unknown>> {

@@ -10,7 +10,7 @@ describe('TrayRenderer', () => {
         trayProps={{ text: 'Hello Tray' }}
         config={{}}
         TrayComponent={DummyTray as any}
-        insets={{ bottom: 0, left: 0, right: 0 }}
+        insets={{ bottom: 0, top: 0, left: 0, right: 0 }}
       />
     );
     expect(getByText('Hello Tray')).toBeTruthy();

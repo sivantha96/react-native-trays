@@ -17,7 +17,8 @@ export const TrayStackRenderer = <T extends TrayRegistry>({
   config: TrayStackConfig;
   trays: T;
 }) => {
-  const insets = useSafeAreaInsets();
+  const { top, bottom, left, right } = useSafeAreaInsets();
+  const insets = { top, bottom, left, right };
   const activeTray = stack[stack.length - 1];
   if (!activeTray) return null;
   const TrayComponent = trays[activeTray.tray]?.component;

@@ -130,9 +130,28 @@ export const TrayRenderer: React.FC<TrayRendererProps> = ({
       ? Keyboard.addListener('keyboardWillHide', handleKeyboardHide)
       : Keyboard.addListener('keyboardDidHide', handleKeyboardHide);
 
+    // On iOS the will* events fire only once per keyboard presentation; the
+    // did* events carry identical endCoordinates and act as a backstop when
+    // the will* event was missed (e.g. keyboard presented during mount).
+    const showBackstopSub = isIOS
+      ? Keyboard.addListener('keyboardDidShow', handleKeyboardShow)
+      : null;
+    const hideBackstopSub = isIOS
+      ? Keyboard.addListener('keyboardDidHide', handleKeyboardHide)
+      : null;
+
+    // If the keyboard was already up before this tray mounted, no event is
+    // coming at all — seed from the cached metrics.
+    const openKeyboard = Keyboard.metrics();
+    if (openKeyboard) {
+      handleKeyboardShow({ endCoordinates: openKeyboard } as KeyboardEvent);
+    }
+
     return () => {
       showSub.remove();
       hideSub.remove();
+      showBackstopSub?.remove();
+      hideBackstopSub?.remove();
     };
   }, [
     config.adjustForKeyboard,

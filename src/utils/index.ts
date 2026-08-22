@@ -40,19 +40,19 @@ export const calculateKeyboardAdjustments = (
 
   const strategies = {
     noAdjustment: {
-      bottom: isAndroid ? -keyboardHeight : insetsBottom,
+      bottom: insetsBottom,
       maxHeight: maxAllowedHeight,
     },
     adjustOnly: {
-      bottom: isAndroid ? 0 : keyboardHeight,
+      bottom: isAndroid ? keyboardHeight + insetsBottom : keyboardHeight,
       maxHeight: maxAllowedHeight,
     },
     clipOnly: {
-      bottom: isAndroid ? -keyboardHeight : insetsBottom,
+      bottom: insetsBottom,
       maxHeight: maxAllowedHeight,
     },
     adjustAndClip: {
-      bottom: isAndroid ? 0 : keyboardHeight,
+      bottom: isAndroid ? keyboardHeight + insetsBottom : keyboardHeight,
       maxHeight: maxAllowedHeight - keyboardHeight + insetsBottom,
     },
     hide: {
